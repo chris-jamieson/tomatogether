@@ -7,3 +7,10 @@
 meteor-platform
 autopublish
 insecure
+iron:router
+accounts-password
+twbs:bootstrap
+aldeed:collection2
+aldeed:simple-schema
+sacha:spin
+ian:accounts-ui-bootstrap-3

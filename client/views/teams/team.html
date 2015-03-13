@@ -1,0 +1,9 @@
+<template name="team">
+    <div class="team-container">
+        <h3>{{ name }}</h3>
+        <a href="/timers/teams/{{_id}}">See timers</a>
+        {{ #each members }}
+            {{ > teamMember }}
+        {{/each}}
+    </div>
+</template>
