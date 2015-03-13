@@ -1,5 +1,6 @@
 <template name="teamTimers">
-    {{#each data}}
-        {{timer}}
+    {{#each team.members}}
+        {{ > teamMember }}
+        {{ > latestTimer }}
     {{/each}}
 </template>
