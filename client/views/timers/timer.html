@@ -1,3 +1,8 @@
 <template name="timer">
-    This is a timer
+    {{ #if timer.count }}
+        {{ timer }}
+    {{ else }}
+        No timer found - add one
+        {{ > insertTimerForm }}
+    {{ /if }}
 </template>
