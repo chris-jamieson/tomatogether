@@ -1,8 +1,27 @@
 <template name="timer">
-    {{ #if timer.count }}
-        {{ timer }}
-    {{ else }}
-        No timer found - add one
-        {{ > insertTimerForm }}
-    {{ /if }}
+    <div class="timer-container">
+        <div class="timer-user-container">
+            user ID: {{ createdBy }}
+        </div>
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: {{percentageComplete}}%;">
+            <span class="sr-only">{{percentageComplete}}% Complete</span>
+          </div>
+        </div>
+        <div class="controls">
+            {{ #if ownTimer }}
+                <div class="btn-group">
+                    <button class="btn btn-primary start-timer">
+                        <i class="fa fa-play"></i><span class="sr-only">Start timer</span>
+                    </button>
+                    <button class="btn btn-primary pause-timer">
+                        <i class="fa fa-pause"></i><span class="sr-only">Pause timer</span>
+                    </button>
+                    <button class="btn btn-primary stop-timer">
+                        <i class="fa fa-stop"></i><span class="sr-only">Stop timer</span>
+                    </button>
+                </div>
+            {{ /if }}
+        </div>
+    </div>
 </template>
