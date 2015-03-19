@@ -1,0 +1,8 @@
+<template name="latestTimer">
+    {{ #if timer.count }}
+        {{ timer }}
+    {{ else }}
+        No timer found - add one
+        {{ > insertTimerForm }}
+    {{ /if }}
+</template>
