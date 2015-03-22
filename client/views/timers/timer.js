@@ -1,3 +1,19 @@
+function markTimerComplete (timer) {
+    if ( timer.status !== "completed" ){
+        var totalSeconds = timer.durationWork + timer.durationBreak;
+        Timers.update({_id: timer._id}, {$set: {status: 'completed', secondsElapsed: totalSeconds}}, function (error, result) {
+            if(error){
+                console.log(error);
+            }
+            if(result){
+                console.log(result);
+                updateTimerInSession(timer._id);
+                clearInterval(timer);
+            }
+        });
+    }
+}
+
 function calculateSecondsElapsed(timer){
     var secondsElapsed = 0;
     switch(timer.status){
@@ -20,21 +36,41 @@ function calculateSecondsElapsed(timer){
             break;
     }
 
+    if( secondsElapsed >= timer.durationWork + timer.durationBreak){
+        console.log('timer should be marked complete');
+        markTimerComplete(timer);
+    }
+
     return secondsElapsed;
 }
 
-function startInterval (timer) {
-    var intervalId = Meteor.setInterval( function () {
-        var updatedTimer = Session.get('timer-object-' + timer._id);
-        Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(updatedTimer));
-    }, 1000 );
+function startInterval ( timer ) {
+    if( timer.status !== "completed"){
+        var intervalId = Meteor.setInterval( function () {
+            var updatedTimer = Session.get('timer-object-' + timer._id);
+            Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(updatedTimer));
+        }, 1000 );
 
-    Session.set('intervalId-timer-' + timer._id, intervalId);
+        Session.set('intervalId-timer-' + timer._id, intervalId);
+    }
+}
+
+function clearInterval ( timer ) {
+    var intervalId = Session.get('intervalId-timer-' + timer._id);
+    Meteor.clearInterval(intervalId);
 }
 
 function updateTimerInSession ( timerId ) {
     var timer = Timers.findOne( { _id : timerId } );
     Session.set('timer-object-' + timerId, timer);
+}
+
+function timerNotYetStarted (timer ) {
+    if ( timer.status === "paused" && timer.secondsElapsed === 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 Template.timer.onCreated( function () {
@@ -46,8 +82,7 @@ Template.timer.onCreated( function () {
 
 Template.timer.onDestroyed( function () {
     var timer = this.data;
-    var intervalId = Session.get('intervalId-timer-' + timer._id);
-    Meteor.clearInterval(intervalId);
+    clearInterval(timer);
 });
 
 Template.timer.rendered = function( ) {
@@ -65,14 +100,64 @@ Template.timer.helpers({
         var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id) || 0;
         if ( secondsElapsed >= timer.durationWork ){
             percentageWorkComplete = 100;
+        }else{
+            percentageWorkComplete = ( secondsElapsed / timer.durationWork ) * 100;
         }
-        return (secondsElapsed / totalSeconds) * 100;
+        // calculate percentage of total
+        var workAsPercentageOfTotal = (timer.durationWork / totalSeconds) * 100;
+        return Math.round(workAsPercentageOfTotal * (percentageWorkComplete / 100));
     },
     percentageBreakComplete: function () {
         var timer = this;
+        var percentageBreakComplete = 0;
         var totalSeconds = timer.durationWork + timer.durationBreak;
         var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
-        return (secondsElapsed / totalSeconds) * 100;
+        if ( secondsElapsed <= timer.durationWork ) {
+            percentageBreakComplete = 0;
+        }else{
+            var secondsBreakComplete = secondsElapsed - timer.durationWork;
+            percentageBreakComplete = ( secondsBreakComplete / timer.durationBreak ) * 100;
+        }
+        // calculate percentage of total
+        var breakAsPercentageOfTotal = (timer.durationBreak / totalSeconds) * 100;
+        return Math.round(breakAsPercentageOfTotal * (percentageBreakComplete / 100));
+    },
+    progressbarClasses: function (args) {
+        var classes = ['progress-bar'];
+        var phase = args.hash.phase;
+        var timer = this;
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
+        
+        // colour class
+        if ( phase === "work" ) {
+            classes.push( 'progress-bar-danger' );
+        }
+        if ( phase === "break" ) {
+            classes.push( 'progress-bar-success' );
+        }
+
+        // striped?
+        if ( secondsElapsed <= timer.durationWork ) {
+            if ( phase === "work" ) {
+                classes.push( 'progress-bar-striped' );
+                // animated?
+                if ( timer.status === "started" ) {
+                    classes.push( "active" );
+                }
+            }
+        }
+
+        if ( secondsElapsed > timer.durationWork  && secondsElapsed < timer.durationWork + timer.durationBreak) {
+            if ( phase === "break" ) {
+                classes.push( 'progress-bar-striped' );
+                // animated?
+                if ( timer.status === "started" ) {
+                    classes.push( "active" );
+                }
+            }
+        }
+        
+        return classes.join( ' ' );
     },
     ownTimer: function () {
         var currentUserId = Meteor.userId();
@@ -109,6 +194,72 @@ Template.timer.helpers({
         }else{
             return false;
         }
+    },
+    statusFormatted: function () {
+        var timer = this;
+        var status = '';
+        switch(timer.status){
+            case "started":
+                status = "in progress";
+                break;
+            case "paused":
+                if ( timerNotYetStarted ( timer ) ){
+                    status = "not started";
+                } else {
+                    status = "paused";
+                }
+                break;
+            case "stopped":
+                status = "stopped";
+                break;
+            case "completed":
+                status = "completed";
+                break;
+        }
+        return status;
+    },
+    showProgressInformation: function () {
+        var timer = this;
+        var show = false;
+        if ( timer.status === "started" || timer.status === "paused"){
+            if ( timerNotYetStarted ( timer ) ){
+                show = false;
+            }else{
+                show = true;
+            }
+        }else{
+            show = false;
+        }
+        return show;
+    },
+    timerPhase: function () {
+        var timer = this;
+        var phase = '';
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
+        if ( secondsElapsed <= timer.durationWork ) {
+            phase = 'working';
+        }
+        if ( secondsElapsed > timer.durationWork ) {
+            phase = 'on break';
+        }
+        return phase;
+    },
+    timeRemaining: function () {
+        var timer = this;
+        var timeRemaining = '';
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
+        var secondsRemaining = 0;
+        if ( secondsElapsed <= timer.durationWork ) {
+            // work phase
+            secondsRemaining = timer.durationWork - secondsElapsed;
+        }
+        if ( secondsElapsed > timer.durationWork ) {
+            // break phase
+            var secondsBreakComplete = secondsElapsed - timer.durationWork;
+            secondsRemaining = timer.durationBreak - secondsElapsed;
+        }
+        timeRemaining = moment.duration(secondsRemaining, 'seconds').humanize();
+        return timeRemaining;
     }
 });
 

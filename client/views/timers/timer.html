@@ -1,12 +1,24 @@
 <template name="timer">
     <div class="timer-container">
         <p>Timer id: {{ _id }}</p>
-        <div class="progress">
-          <div class="progress-bar progress-bar-danger" role="progressbar" style="width: {{percentageWorkComplete}}%;">
-            <span class="sr-only">{{percentageWorkComplete}}% Complete</span>
-          </div>
-          <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{percentageBreakComplete}}%">
-              <span class="sr-only">{{percentageBreakComplete}}% Complete (danger)</span>
+        <div class="status-container">
+            <p>
+            {{ #if showProgressInformation }}
+                <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left</div>
+                <div class="text-muted pull-right">timer {{ statusFormatted }}</div>
+            {{ else }}
+                <div class="text-center">timer {{ statusFormatted }}</div>
+            {{ /if }}
+            </p>
+        </div>
+        <div class="progress-container">
+            <div class="progress">
+              <div class="{{ progressbarClasses phase="work" }}" style="width: {{percentageWorkComplete}}%;">
+                <span class="sr-only">{{percentageWorkComplete}}% Complete (work)</span>
+              </div>
+              <div class="{{ progressbarClasses phase="break" }}" style="width: {{percentageBreakComplete}}%;">
+                <span class="sr-only">{{percentageBreakComplete}}% Complete (break)</span>
+              </div>
             </div>
         </div>
         <div class="controls">
