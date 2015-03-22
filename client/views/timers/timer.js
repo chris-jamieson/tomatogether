@@ -1,3 +1,9 @@
+function userDisplayName(userId){
+    var displayName = userId;
+    // @TODO get name if available
+    return displayName;
+}
+
 function markTimerComplete (timer) {
     if ( timer.status !== "completed" ){
         var totalSeconds = timer.durationWork + timer.durationBreak;
@@ -9,6 +15,7 @@ function markTimerComplete (timer) {
                 console.log(result);
                 updateTimerInSession(timer._id);
                 clearInterval(timer);
+                // toastr.success(userDisplayName(timer.createdBy) + " completed a timer");
             }
         });
     }
@@ -37,7 +44,6 @@ function calculateSecondsElapsed(timer){
     }
 
     if( secondsElapsed >= timer.durationWork + timer.durationBreak){
-        console.log('timer should be marked complete');
         markTimerComplete(timer);
     }
 
@@ -234,31 +240,36 @@ Template.timer.helpers({
     },
     timerPhase: function () {
         var timer = this;
-        var phase = '';
-        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
-        if ( secondsElapsed <= timer.durationWork ) {
-            phase = 'working';
-        }
-        if ( secondsElapsed > timer.durationWork ) {
-            phase = 'on break';
+        var phase = 'started';
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id);
+        if ( typeof secondsElapsed !== "undefined" ) {
+            if ( secondsElapsed <= timer.durationWork ) {
+                phase = 'working';
+            }
+            if ( secondsElapsed > timer.durationWork ) {
+                phase = 'on break';
+            }
         }
         return phase;
     },
     timeRemaining: function () {
         var timer = this;
-        var timeRemaining = '';
-        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
-        var secondsRemaining = 0;
-        if ( secondsElapsed <= timer.durationWork ) {
-            // work phase
-            secondsRemaining = timer.durationWork - secondsElapsed;
+        var timeRemaining = 'calculating time';
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id);
+        if ( typeof secondsElapsed !== "undefined" ) {
+            var secondsRemaining = 0;
+            if ( secondsElapsed <= timer.durationWork ) {
+                // work phase
+                secondsRemaining = timer.durationWork - secondsElapsed;
+            }
+            if ( secondsElapsed > timer.durationWork ) {
+                // break phase
+                var secondsBreakComplete = secondsElapsed - timer.durationWork;
+                secondsRemaining = timer.durationBreak - secondsBreakComplete;
+            }
+            timeRemaining = moment.duration(secondsRemaining, 'seconds').humanize();
         }
-        if ( secondsElapsed > timer.durationWork ) {
-            // break phase
-            var secondsBreakComplete = secondsElapsed - timer.durationWork;
-            secondsRemaining = timer.durationBreak - secondsElapsed;
-        }
-        timeRemaining = moment.duration(secondsRemaining, 'seconds').humanize();
+        
         return timeRemaining;
     }
 });
@@ -277,10 +288,11 @@ Template.timer.events({
                     console.log(result);
                     updateTimerInSession(timer._id);
                     startInterval(timer);
+                    toastr.info("You started a timer");
                 }
             });
         }else{
-            console.log('Timer can only be started from paused state');
+            toastr.error("Timer can only be started from paused state");
         }
     },
     'click .pause-timer': function (e) {
@@ -304,10 +316,11 @@ Template.timer.events({
                 if(result){
                     console.log(result);
                     updateTimerInSession(timer._id);
+                    toastr.info("You paused a timer");
                 }
             });
         }else{
-            console.log('can\'t pause a timer that\'s not running');
+            toastr.error("You can\'t pause a timer that\'s not running");
         }
 
     },
@@ -322,10 +335,11 @@ Template.timer.events({
                 if(result){
                     console.log(result);
                     updateTimerInSession(timer._id);
+                    toastr.info("You stopped a timer");
                 }
             });
         }else{
-            console.log('Timer must be started or paused in order to be stopped');
+            toastr.error("Timer must be started or paused in order to be stopped");
         }
     }
 });

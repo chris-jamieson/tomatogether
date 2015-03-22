@@ -1,9 +1,41 @@
 <template name="insertTimerForm">
-    <form id="insert-timer-form">
-        <label for="work-minutes">Work mins</label>
-        <input class="form-control" name="work-minutes" type="number" value="25">
-        <label for="break-minutes">Break mins</label>
-        <input class="form-control" name="break-minutes" type="number" value="5">
-        <button class="btn btn-primary insert-timer-form-submit">Add timer</button>
+    <form id="insert-timer-form" class="form-horizontal">
+    <fieldset>
+
+    <!-- Form Name -->
+    <legend>New timer</legend>
+
+    <!-- Appended Input-->
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="work-minutes">Work</label>
+      <div class="col-md-4">
+        <div class="input-group">
+          <input id="work-minutes" name="work-minutes" class="form-control" placeholder="25" type="number" value="25" required="">
+          <span class="input-group-addon">mins</span>
+        </div>
+        
+      </div>
+    </div>
+    <!-- Appended Input-->
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="break-minutes">Break</label>
+      <div class="col-md-4">
+        <div class="input-group">
+          <input id="break-minutes" name="break-minutes" class="form-control" placeholder="5" type="number" value="5" required="">
+          <span class="input-group-addon">mins</span>
+        </div>
+        
+      </div>
+    </div>
+    <!-- Button -->
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="insert-timer-form-submit"></label>
+      <div class="col-md-4">
+        <button id="insert-timer-form-submit" name="insert-timer-form-submit" class="btn btn-primary insert-timer-form-submit">Create timer</button>
+      </div>
+    </div>
+
+    </fieldset>
     </form>
+
 </template>

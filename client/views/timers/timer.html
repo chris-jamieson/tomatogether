@@ -1,47 +1,48 @@
 <template name="timer">
-    <div class="timer-container">
-        <p>Timer id: {{ _id }}</p>
-        <div class="status-container">
-            <p>
-            {{ #if showProgressInformation }}
-                <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left</div>
-                <div class="text-muted pull-right">timer {{ statusFormatted }}</div>
-            {{ else }}
-                <div class="text-center">timer {{ statusFormatted }}</div>
-            {{ /if }}
-            </p>
-        </div>
-        <div class="progress-container">
-            <div class="progress">
-              <div class="{{ progressbarClasses phase="work" }}" style="width: {{percentageWorkComplete}}%;">
-                <span class="sr-only">{{percentageWorkComplete}}% Complete (work)</span>
-              </div>
-              <div class="{{ progressbarClasses phase="break" }}" style="width: {{percentageBreakComplete}}%;">
-                <span class="sr-only">{{percentageBreakComplete}}% Complete (break)</span>
-              </div>
+    {{ #if completedOrStopped }}
+        {{ #if ownTimer }}
+            <div class="insert-timer-container col-xs-6 col-xs-offset-3">
+                {{ > insertTimerForm }}
+            </div>
+        {{ else }}
+            <p>No active timer</p>
+        {{ /if }}
+    {{ else }}
+        <div class="timer-container">
+            <div class="status-container">
+                <p>
+                {{ #if showProgressInformation }}
+                    <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left <span class="text-muted pull-right">(timer {{ statusFormatted }})</span></div>
+                {{ else }}
+                    <div class="text-center">timer {{ statusFormatted }}</div>
+                {{ /if }}
+                </p>
+            </div>
+            <div class="progress-container">
+                <div class="progress">
+                  <div class="{{ progressbarClasses phase="work" }}" style="width: {{percentageWorkComplete}}%;">
+                    <span class="sr-only">{{percentageWorkComplete}}% Complete (work)</span>
+                  </div>
+                  <div class="{{ progressbarClasses phase="break" }}" style="width: {{percentageBreakComplete}}%;">
+                    <span class="sr-only">{{percentageBreakComplete}}% Complete (break)</span>
+                  </div>
+                </div>
+            </div>
+            <div class="controls">
+                {{ #if ownTimer }}
+                    <div class="btn-group">
+                        <button class="btn btn-primary start-timer" disabled="{{ notStartable }}">
+                            <i class="fa fa-play"></i><span class="sr-only">Start timer</span>
+                        </button>
+                        <button class="btn btn-primary pause-timer" disabled="{{ notPausable }}">
+                            <i class="fa fa-pause"></i><span class="sr-only">Pause timer</span>
+                        </button>
+                        <button class="btn btn-primary stop-timer" disabled="{{ notStoppable }}">
+                            <i class="fa fa-stop"></i><span class="sr-only">Stop timer</span>
+                        </button>
+                    </div>
+                {{ /if }}
             </div>
         </div>
-        <div class="controls">
-            {{ #if ownTimer }}
-                <div class="btn-group">
-                    <button class="btn btn-primary start-timer" disabled="{{ notStartable }}">
-                        <i class="fa fa-play"></i><span class="sr-only">Start timer</span>
-                    </button>
-                    <button class="btn btn-primary pause-timer" disabled="{{ notPausable }}">
-                        <i class="fa fa-pause"></i><span class="sr-only">Pause timer</span>
-                    </button>
-                    <button class="btn btn-primary stop-timer" disabled="{{ notStoppable }}">
-                        <i class="fa fa-stop"></i><span class="sr-only">Stop timer</span>
-                    </button>
-                </div>
-            {{ /if }}
-        </div>
-        {{ #if completedOrStopped }}
-            {{ #if ownTimer }}
-                <div class="insert-timer-container">
-                    {{ > insertTimerForm }}
-                </div>
-            {{ /if }}
-        {{ /if }}
-    </div>
+    {{ /if }}
 </template>
