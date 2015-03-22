@@ -2,9 +2,12 @@
     <div class="timer-container">
         <p>Timer id: {{ _id }}</p>
         <div class="progress">
-          <div class="progress-bar" role="progressbar" style="width: {{percentageComplete}}%;">
-            <span class="sr-only">{{percentageComplete}}% Complete</span>
+          <div class="progress-bar progress-bar-danger" role="progressbar" style="width: {{percentageWorkComplete}}%;">
+            <span class="sr-only">{{percentageWorkComplete}}% Complete</span>
           </div>
+          <div class="progress-bar progress-bar-success" role="progressbar" style="width: {{percentageBreakComplete}}%">
+              <span class="sr-only">{{percentageBreakComplete}}% Complete (danger)</span>
+            </div>
         </div>
         <div class="controls">
             {{ #if ownTimer }}

@@ -13,7 +13,7 @@ function calculateSecondsElapsed(timer){
             break;
         case 'stopped':
             secondsElapsed = timer.secondsElapsed;
-            // @TODO should include secondsSinceStarted
+            // @TODO should include secondsSinceStarted (I think)
             break;
         case 'completed':
             secondsElapsed = timer.durationWork + timer.durationBreak;
@@ -58,16 +58,20 @@ Template.timer.rendered = function( ) {
 };
 
 Template.timer.helpers({
-    percentageComplete: function () {
+    percentageWorkComplete: function () {
+        var timer = this;
+        var percentageWorkComplete = 0;
+        var totalSeconds = timer.durationWork + timer.durationBreak;
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id) || 0;
+        if ( secondsElapsed >= timer.durationWork ){
+            percentageWorkComplete = 100;
+        }
+        return (secondsElapsed / totalSeconds) * 100;
+    },
+    percentageBreakComplete: function () {
         var timer = this;
         var totalSeconds = timer.durationWork + timer.durationBreak;
-        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id);
-        if(typeof secondsElapsed === "undefined"){
-            console.log('it was undefined');
-            secondsElapsed = 0;
-            Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(timer));
-            updateTimerInSession(timer._id);
-        }
+        var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
         return (secondsElapsed / totalSeconds) * 100;
     },
     ownTimer: function () {
