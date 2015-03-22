@@ -1,8 +1,6 @@
 <template name="timer">
     <div class="timer-container">
-        <div class="timer-user-container">
-            user ID: {{ createdBy }}
-        </div>
+        <p>Timer id: {{ _id }}</p>
         <div class="progress">
           <div class="progress-bar" role="progressbar" style="width: {{percentageComplete}}%;">
             <span class="sr-only">{{percentageComplete}}% Complete</span>

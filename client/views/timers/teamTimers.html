@@ -1,5 +1,12 @@
 <template name="teamTimers">
-    {{#each latestTimers}}
-        {{ > timer }}
-    {{/each}}
+	{{#each team.members }}
+		<p>Member ID: {{ this }}</p>
+		{{ #if latestTimer this }}
+			{{ > timer latestTimer this}}
+		{{ else }}
+			{{ #if isCurrentUser this }}
+				{{ > insertTimerForm }}
+			{{ /if }}
+		{{ /if }}
+	{{ /each }}
 </template>
