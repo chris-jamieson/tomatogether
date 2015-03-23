@@ -1,7 +1,7 @@
 function isInTeam ( team, userId ) {
 	var isMemberOfTeam = false;
 	if ( userId ) {
-		if(team.members.indexOf(userId) !== -1){  
+		if(team.members.indexOf(userId) !== -1){
 			isMemberOfTeam = true;
 		} else {
 			isMemberOfTeam = false;
@@ -59,17 +59,15 @@ Template.team.events({
 	'click .team-join': function (e) {
 		e.preventDefault();
 		var team = this;
-		var members = team.members;
 		var currentUserId = Meteor.userId();
 		if ( currentUserId ){
-			members.push( currentUserId );
 			// update the team collection
-			Teams.update({_id: team._id}, {$set: {members: members}}, function (error, result) {
+			Teams.update({_id: team._id}, {$push: {members: currentUserId}}, function (error, result) {
 			    if(error){
-			        console.log(error);
+			    	console.log(error);
+			        toastr.error(error.message, "Error");
 			    }
 			    if(result){
-			        console.log(result);
 			        toastr.info("You joined " + team.name);
 			    }
 			});
@@ -78,22 +76,14 @@ Template.team.events({
 	'click .team-leave': function (e) {
 		e.preventDefault();
 		var team = this;
-		var members = team.members;
 		var currentUserId = Meteor.userId();
 		if ( currentUserId ){
-			for (var i = members.length - 1; i >= 0; i--) {
-			  if ( members[i] === currentUserId ) {
-			    // remove this item
-			    team.members.splice(i, 1);
-			  }
-			};
 			// update the team collection
-			Teams.update({_id: team._id}, {$set: {members: members}}, function (error, result) {
+			Teams.update({_id: team._id}, {$pull: {members: currentUserId}}, function (error, result) {
 			    if(error){
-			        console.log(error);
+			        toastr.error(error.message, "Error");
 			    }
 			    if(result){
-			        console.log(result);
 			        toastr.info("You left " + team.name);
 			    }
 			});

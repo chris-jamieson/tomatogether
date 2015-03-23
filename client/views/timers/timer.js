@@ -4,71 +4,9 @@ function userDisplayName(userId){
     return displayName;
 }
 
-function markTimerComplete (timer) {
-    if ( timer.status !== "completed" ){
-        var totalSeconds = timer.durationWork + timer.durationBreak;
-        Timers.update({_id: timer._id}, {$set: {status: 'completed', secondsElapsed: totalSeconds}}, function (error, result) {
-            if(error){
-                console.log(error);
-            }
-            if(result){
-                console.log(result);
-                updateTimerInSession(timer._id);
-                clearInterval(timer);
-                // toastr.success(userDisplayName(timer.createdBy) + " completed a timer");
-            }
-        });
-    }
-}
-
-function calculateSecondsElapsed(timer){
-    var secondsElapsed = 0;
-    switch(timer.status){
-        case 'started':
-            // get seconds between time started and time now
-            var startedAt = moment(timer.startedAt);
-            var secondsSinceStarted = moment().diff(startedAt, 'seconds');
-            // add that to the existing "seconds elapsed" property
-            secondsElapsed = timer.secondsElapsed + secondsSinceStarted;
-            break;
-        case 'paused':
-            secondsElapsed = timer.secondsElapsed;
-            break;
-        case 'stopped':
-            secondsElapsed = timer.secondsElapsed;
-            // @TODO should include secondsSinceStarted (I think)
-            break;
-        case 'completed':
-            secondsElapsed = timer.durationWork + timer.durationBreak;
-            break;
-    }
-
-    if( secondsElapsed >= timer.durationWork + timer.durationBreak){
-        markTimerComplete(timer);
-    }
-
-    return secondsElapsed;
-}
-
-function startInterval ( timer ) {
-    if( timer.status !== "completed"){
-        var intervalId = Meteor.setInterval( function () {
-            var updatedTimer = Session.get('timer-object-' + timer._id);
-            Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(updatedTimer));
-        }, 1000 );
-
-        Session.set('intervalId-timer-' + timer._id, intervalId);
-    }
-}
-
 function clearInterval ( timer ) {
     var intervalId = Session.get('intervalId-timer-' + timer._id);
     Meteor.clearInterval(intervalId);
-}
-
-function updateTimerInSession ( timerId ) {
-    var timer = Timers.findOne( { _id : timerId } );
-    Session.set('timer-object-' + timerId, timer);
 }
 
 function timerNotYetStarted (timer ) {
@@ -81,9 +19,9 @@ function timerNotYetStarted (timer ) {
 
 Template.timer.onCreated( function () {
     var timer = this.data;
-    startInterval(timer);
-    Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(timer));
-    updateTimerInSession(timer._id);
+    Meteor.sharedTimerFunctions.startInterval(timer);
+    Session.set('secondsElapsed-timer-' + timer._id, Meteor.sharedTimerFunctions.calculateSecondsElapsed(timer));
+    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
 });
 
 Template.timer.onDestroyed( function () {
@@ -94,8 +32,8 @@ Template.timer.onDestroyed( function () {
 Template.timer.rendered = function( ) {
     // figure out seconds elapsed
     var timer = this.data;
-    Session.set('secondsElapsed-timer-' + timer._id, calculateSecondsElapsed(timer));
-    updateTimerInSession(timer._id);
+    Session.set('secondsElapsed-timer-' + timer._id, Meteor.sharedTimerFunctions.calculateSecondsElapsed(timer));
+    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
 };
 
 Template.timer.helpers({
@@ -282,12 +220,11 @@ Template.timer.events({
             var startedAt = new Date();
             Timers.update({_id: timer._id}, {$set: {status: 'started', startedAt: startedAt}}, function (error, result) {
                 if(error){
-                    console.log(error);
+                    toastr.error(error.message, "Error");
                 }
                 if(result){
-                    console.log(result);
-                    updateTimerInSession(timer._id);
-                    startInterval(timer);
+                    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
+                    Meteor.sharedTimerFunctions.startInterval(timer);
                     toastr.info("You started a timer");
                 }
             });
@@ -311,11 +248,10 @@ Template.timer.events({
 
             Timers.update({_id: timer._id}, {$set: {status: 'paused', secondsElapsed: secondsElapsed}}, function (error, result) {
                 if(error){
-                    console.log(error);
+                    toastr.error(error.message, "Error");
                 }
                 if(result){
-                    console.log(result);
-                    updateTimerInSession(timer._id);
+                    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
                     toastr.info("You paused a timer");
                 }
             });
@@ -330,11 +266,10 @@ Template.timer.events({
         if(timer.status === "started" || timer.status === "paused"){
             Timers.update({_id: timer._id}, {$set: {status: 'stopped'}}, function (error, result) {
                 if(error){
-                    console.log(error);
+                    toastr.error(error.message, "Error");
                 }
                 if(result){
-                    console.log(result);
-                    updateTimerInSession(timer._id);
+                    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
                     toastr.info("You stopped a timer");
                 }
             });

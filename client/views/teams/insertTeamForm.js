@@ -8,9 +8,9 @@ Template.insertTeamForm.events({
 
         var members = [Meteor.userId()];
 
-        Teams.insert( { name:  name, members: members}, function ( error, result ) {
+        Teams.insert( { name:  name, members: members, administrators: members}, function ( error, result ) {
             if(error){
-                console.log(error);
+                toastr.error(error);
             }
 
             if(result){
