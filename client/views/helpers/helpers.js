@@ -22,3 +22,13 @@ UI.registerHelper('userIsLoggedIn', function(context, options) {
 		return false;
 	}
 });
+
+UI.registerHelper('calendarDate', function(context, options) {
+  if( context ) {
+    if( moment ( context ).isValid ( ) ) {
+      return moment ( context ).calendar( );
+    } else {
+      return "invalid date";
+    }
+  }
+});

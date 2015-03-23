@@ -18,6 +18,12 @@ Template.team.helpers({
 
 		return isMemberOfTeam;
 	},
+	isGroupAdmin: function (args) {
+		var administrators = args.hash.administrators;
+		var userId = args.hash.userId;
+
+		return _.contains(administrators, userId);
+	},
 	canLeaveTeam: function () {
 		var team = this;
 		var currentUserId = Meteor.userId();

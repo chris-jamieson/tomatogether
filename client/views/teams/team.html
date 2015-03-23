@@ -1,27 +1,40 @@
 <template name="team">
     <div class="team-container">
-        <h2 class="team-name">{{ name }}</h2>
-        <h3>Who's in this team?</h3>
-        <ul class="member-list">
-        {{ #each members }}
-            <li>{{ userDisplayName this }}</li>
-            <!-- <li>{{ > teamMember }}</li> -->
-        {{/each}}
-        </ul>
-        <a href="/timers/teams/{{_id}}" class="btn btn-lg btn-primary"><i class="fa fa-clock-o"></i> See timers</a>
-        <div class="team-actions">
-        	{{ #if memberOfTeam }}
-        		{{ #if canLeaveTeam }}
-        			<button class="btn btn-sm  btn-warning team-leave">Leave team</button>
-        		{{ /if }}
-        		{{ #if canDeleteTeam }}
-        			<button class="btn btn-sm  btn-danger team-delete">Delete team</button>
-        		{{ /if }}
-        	{{ else }}
-        		{{ #if canJoinTeam }}
-        			<button class="btn btn-sm  btn-success team-join">Join team</button>
-        		{{ /if }}
-        	{{ /if }}
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2 class="team-name">{{ name }}</h2></div>
+            <div class="panel-body">
+                <ul class="list-inline">
+                    <li><i class="fa fa-eye"></i> Privacy: {{ privacy }}</li>
+                    <li><i class="fa fa-calendar-o"></i> Created {{ calendarDate createdAt }}</li>
+                </ul>
+
+                <div class="btn-group" role="group">
+                <a href="/timers/teams/{{_id}}" class="btn btn-primary"><i class="fa fa-clock-o"></i> See timers</a>
+                {{ #if memberOfTeam }}
+                    {{ #if canLeaveTeam }}
+                        <button class="btn btn-warning team-leave"><i class="fa fa-user-times"></i> Leave team</button>
+                    {{ /if }}
+                    {{ #if canDeleteTeam }}
+                        <button class="btn btn-danger team-delete"><i class="fa fa-trash-o"></i> Delete team</button>
+                    {{ /if }}
+                {{ else }}
+                    {{ #if canJoinTeam }}
+                        <button class="btn btn-success team-join"><i class="fa fa-user-plus"></i> Join team</button>
+                    {{ /if }}
+                {{ /if }}
+                </div>
+            </div>
+
+            <ul class="list-group">
+                {{ #each members }}
+                <li class="list-group-item">
+                    {{ #if isGroupAdmin administrators=../administrators userId=this }}
+                        <span class="badge">admin</span>
+                    {{ /if }}
+                    {{ userDisplayName this }}
+                </li>
+                {{ /each }}
+            </ul>
         </div>
     </div>
 </template>
