@@ -4,6 +4,11 @@ Meteor.publish("allTeams", function () {
   ];
 });
 
+// @TODO should be a publication just for users in teams I'm in
+Meteor.publish("allUserData", function () {
+    return Meteor.users.find({}, {fields: {'emails': 1}});
+});
+
 Meteor.publish("teamTimers", function (teamId) {
   // Check argument
   check(teamId, String);

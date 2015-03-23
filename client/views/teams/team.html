@@ -1,9 +1,27 @@
 <template name="team">
     <div class="team-container">
-        <h3>{{ name }}</h3>
-        <a href="/timers/teams/{{_id}}">See timers</a>
+        <h2 class="team-name">{{ name }}</h2>
+        <h3>Who's in this team?</h3>
+        <ul class="member-list">
         {{ #each members }}
-            {{ > teamMember }}
+            <li>{{ userDisplayName this }}</li>
+            <!-- <li>{{ > teamMember }}</li> -->
         {{/each}}
+        </ul>
+        <a href="/timers/teams/{{_id}}" class="btn btn-lg btn-primary"><i class="fa fa-clock-o"></i> See timers</a>
+        <div class="team-actions">
+        	{{ #if memberOfTeam }}
+        		{{ #if canLeaveTeam }}
+        			<button class="btn btn-sm  btn-warning team-leave">Leave team</button>
+        		{{ /if }}
+        		{{ #if canDeleteTeam }}
+        			<button class="btn btn-sm  btn-danger team-delete">Delete team</button>
+        		{{ /if }}
+        	{{ else }}
+        		{{ #if canJoinTeam }}
+        			<button class="btn btn-sm  btn-success team-join">Join team</button>
+        		{{ /if }}
+        	{{ /if }}
+        </div>
     </div>
 </template>

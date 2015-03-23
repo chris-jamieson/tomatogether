@@ -1,7 +1,12 @@
 <template name="teams">
+	<h1 class="page-title">All teams</h1>
     {{ #each teams }}
         {{ > team }}
     {{ /each }}
 
-    {{ > insertTeamForm }}
+    {{ #if userIsLoggedIn }}
+    	{{ > insertTeamForm }}
+    {{ else }}
+    	<p>Log in or register to join a team, or add your own team</p>
+    {{ /if }}
 </template>

@@ -1,12 +1,15 @@
 <template name="teamTimers">
+	<h1 class="page-title">Timers for {{team.name}}</h1>
 	{{#each team.members }}
-		<p>Member ID: {{ this }}</p>
-		{{ #if latestTimer this }}
-			{{ > timer latestTimer this}}
-		{{ else }}
-			{{ #if isCurrentUser this }}
-				{{ > insertTimerForm }}
+		<div class="team-member-timers-container clearfix">
+			<p><i class="fa fa-2x fa-user"></i> {{ userDisplayName this }}</p>
+			{{ #if latestTimer this }}
+				{{ > timer latestTimer this}}
+			{{ else }}
+				{{ #if isCurrentUser this }}
+					{{ > insertTimerForm }}
+				{{ /if }}
 			{{ /if }}
-		{{ /if }}
+		</div>
 	{{ /each }}
 </template>

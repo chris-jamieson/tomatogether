@@ -1,0 +1,10 @@
+.team-member-timers-container{
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #ddd;
+}
+
+.team-member-timers-container:last-child{
+	border-bottom: 0;
+	padding-bottom: 0;
+}
