@@ -276,5 +276,16 @@ Template.timer.events({
         }else{
             toastr.error("Timer must be started or paused in order to be stopped");
         }
+    },
+    // @TODO move this elsewhere (timer not appropriate place for it)
+    'click .desktop-notifications-enable': function (e) {
+        e.preventDefault();
+        notify.requestPermission();
+    },
+    // @TODO move this elsewhere (timer not appropriate place for it)
+    'click .desktop-notifications-disable': function (e) {
+        e.preventDefault();
+        // @TODO change the user preference
+        toastr.warning('Sorry, this doesn\'t do anything... yet', 'Borked :(');
     }
 });

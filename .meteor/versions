@@ -48,6 +48,7 @@ mobile-status-bar@1.0.3
 momentjs:moment@2.9.0
 mongo@1.1.0
 npm-bcrypt@0.7.8_1
+oaf:html5-desktop-notifications@1.0.0
 observe-sequence@1.0.5
 ordered-dict@1.0.3
 random@1.0.3

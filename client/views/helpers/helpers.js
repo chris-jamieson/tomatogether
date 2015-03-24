@@ -32,3 +32,15 @@ UI.registerHelper('calendarDate', function(context, options) {
     }
   }
 });
+
+UI.registerHelper('desktopNotificationsEnabled', function (context, options) {
+  // @TODO check user preferences to see if they want desktop notifications
+  if ( notify.permissionLevel() == notify.PERMISSION_DEFAULT || notify.permissionLevel() == notify.PERMISSION_DENIED ){
+    return false;
+  }else if ( notify.permissionLevel() == notify.PERMISSION_GRANTED ) {
+    return true;
+  }else{
+    // we don't know, so return false
+    return false;
+  }
+});

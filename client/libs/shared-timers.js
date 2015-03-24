@@ -18,26 +18,51 @@ Meteor.sharedTimerFunctions = {
 	    }
 	},
 
-	preferredBreakNotificationSound : function ( userId ) {
+	preferredBreakNotificationSound : function ( ) {
 		// @TODO get user preferred sounds
 		var filename = 'big-ben';
 		return filename;
 	},
 
+	playBreakNotification : function ( ) {
+		if ( !buzz.isSupported ) {
+			console.log('can\'t play sounds because buzz.js not supported');
+		}else{
+			// @TODO check if user wants sounds (from preferences)
+			var soundFileName = Meteor.sharedTimerFunctions.preferredBreakNotificationSound( );
+			var s = new buzz.sound('/sounds/' + soundFileName, {
+				formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
+			});
+			s.play();
+		}
+	},
+
+	showDesktopNotification: function ( timer ) {
+		// @TODO check if user wants to show desktop notifications
+
+		if( notify.isSupported ){
+			if ( notify.permissionLevel() == notify.PERMISSION_GRANTED ) {
+				var options = {
+					body: 'The work phase of your timer was completed',
+					ico: {
+						'x16': '', // for IE only - should be 16x16px .ico @TODO
+						'x32': '', // for other browsers - should be 32x32px .jpg or .png or .ico @TODO
+					},
+					tag: '' // to prevent multiple notifications from showing if several browser instances open @TODO
+				};
+				notify.createNotification('Time for a break.', options);
+			}			
+		}
+
+	},
+
 	workComplete: function (timer) {
-		console.log('work complete');
 		var currentUserId = Meteor.userId();
+		// only notifying user on changes to their own timer
 		if( currentUserId === timer.createdBy ) {
-			if ( !buzz.isSupported ) {
-				console.log('can\'t play sounds because buzz.js not supported');
-			}else{
-				// @TODO check if user wants sounds
-				var soundFileName = Meteor.sharedTimerFunctions.preferredBreakNotificationSound( currentUserId );
-				var s = new buzz.sound('/sounds/' + soundFileName, {
-					formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
-				});
-				s.play();
-			}
+			Meteor.sharedTimerFunctions.playBreakNotification();
+			Meteor.sharedTimerFunctions.showDesktopNotification( timer );
+			// @TODO get user to confirm before continuing onto the break phase
 		}
 	},
 
