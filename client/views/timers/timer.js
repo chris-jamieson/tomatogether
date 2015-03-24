@@ -144,20 +144,20 @@ Template.timer.helpers({
         var status = '';
         switch(timer.status){
             case "started":
-                status = "in progress";
+                status = '<i class="fa fa-circle-o-notch fa-spin"></i> <span class="sr-only">in progress</span>';
                 break;
             case "paused":
                 if ( timerNotYetStarted ( timer ) ){
-                    status = "not started";
+                    status = '<span class="">not started</span> <i class="fa fa-meh-o"></i> ';
                 } else {
-                    status = "paused";
+                    status = '<i class="fa fa-pause"></i> <span class="sr-only">paused</span>';
                 }
                 break;
             case "stopped":
-                status = "stopped";
+                status = '<i class="fa fa-stop"></i> <span class="sr-only">stopped</span>';
                 break;
             case "completed":
-                status = "completed";
+                status = '<i class="fa fa-check-circle-o"></i> <span class="sr-only">completed</span>';
                 break;
         }
         return status;

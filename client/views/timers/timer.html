@@ -12,9 +12,9 @@
             <div class="status-container">
                 <p>
                 {{ #if showProgressInformation }}
-                    <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left <span class="text-muted pull-right">(timer {{ statusFormatted }})</span></div>
+                    <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left <span class="text-muted pull-right">{{{ statusFormatted }}}</span></div>
                 {{ else }}
-                    <div class="text-center">timer {{ statusFormatted }}</div>
+                    <div class="text-center">timer {{{ statusFormatted }}}</div>
                 {{ /if }}
                 </p>
             </div>
