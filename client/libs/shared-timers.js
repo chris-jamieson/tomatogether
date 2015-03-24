@@ -18,6 +18,29 @@ Meteor.sharedTimerFunctions = {
 	    }
 	},
 
+	preferredBreakNotificationSound : function ( userId ) {
+		// @TODO get user preferred sounds
+		var filename = 'big-ben';
+		return filename;
+	},
+
+	workComplete: function (timer) {
+		console.log('work complete');
+		var currentUserId = Meteor.userId();
+		if( currentUserId === timer.createdBy ) {
+			if ( !buzz.isSupported ) {
+				console.log('can\'t play sounds because buzz.js not supported');
+			}else{
+				// @TODO check if user wants sounds
+				var soundFileName = Meteor.sharedTimerFunctions.preferredBreakNotificationSound( currentUserId );
+				var s = new buzz.sound('/sounds/' + soundFileName, {
+					formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
+				});
+				s.play();
+			}
+		}
+	},
+
 	calculateSecondsElapsed: function ( timer ){
 	    var secondsElapsed = 0;
 	    switch(timer.status){
@@ -38,6 +61,10 @@ Meteor.sharedTimerFunctions = {
 	        case 'completed':
 	            secondsElapsed = timer.durationWork + timer.durationBreak;
 	            break;
+	    }
+
+	    if( secondsElapsed == timer.durationWork){
+	        Meteor.sharedTimerFunctions.workComplete(timer);
 	    }
 
 	    if( secondsElapsed >= timer.durationWork + timer.durationBreak){
