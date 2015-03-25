@@ -9,3 +9,7 @@ It's pretty basic right now in terms of functionality, so please help improve it
 
 - suggest new features / improvements and upvote other suggestions on the [public Trello board](https://trello.com/b/OwmJc0dQ/tomatogether)
 - submit issues or pull requests in the [GitHub repository](https://github.com/jamiesoncj/tomatogether)
+
+## Details
+- A version of the current staging branch should be available at [tomatogether-staging.meteor.com](http://tomatogether-staging.meteor.com)
+- The master branch should generally be up to date with production code deployed at [tomatogether.com](http://www.tomatogether.com)

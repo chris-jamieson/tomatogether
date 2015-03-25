@@ -50,7 +50,7 @@ Meteor.sharedTimerFunctions = {
 					},
 					tag: '' // to prevent multiple notifications from showing if several browser instances open @TODO
 				};
-				notify.createNotification('Time for a break.', options);
+				var notified = notify.createNotification('Time for a break.', options);
 			}			
 		}
 
