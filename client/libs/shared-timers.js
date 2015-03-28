@@ -18,18 +18,19 @@ Meteor.sharedTimerFunctions = {
 	    }
 	},
 
-	preferredBreakNotificationSound : function ( ) {
+	soundFileName : function ( notificationType ) {
 		// @TODO get user preferred sounds
+		// @TODO use notificationType
 		var filename = 'big-ben';
 		return filename;
 	},
 
-	playBreakNotification : function ( ) {
+	playAudioNotification : function ( notificationType ) {
+		// @TODO check if user wants sounds (from preferences)
 		if ( !buzz.isSupported ) {
 			console.log('can\'t play sounds because buzz.js not supported');
 		}else{
-			// @TODO check if user wants sounds (from preferences)
-			var soundFileName = Meteor.sharedTimerFunctions.preferredBreakNotificationSound( );
+			var soundFileName = Meteor.sharedTimerFunctions.soundFileName( notificationType );
 			var s = new buzz.sound('/sounds/' + soundFileName, {
 				formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
 			});
@@ -37,32 +38,78 @@ Meteor.sharedTimerFunctions = {
 		}
 	},
 
-	showDesktopNotification: function ( timer ) {
-		// @TODO check if user wants to show desktop notifications
+	showDesktopNotification: function ( timer, notificationType ) {
+		if ( true ) { // @TODO check if user wants to show desktop notifications
+			desktopNotificationsEnabled = true;
+		}
 
-		if( notify.isSupported ){
-			if ( notify.permissionLevel() == notify.PERMISSION_GRANTED ) {
-				var options = {
-					body: 'The work phase of your timer was completed',
-					ico: {
-						'x16': '', // for IE only - should be 16x16px .ico @TODO
-						'x32': '', // for other browsers - should be 32x32px .jpg or .png or .ico @TODO
-					},
-					tag: '' // to prevent multiple notifications from showing if several browser instances open @TODO
-				};
-				var notified = notify.createNotification('Time for a break.', options);
-			}			
+		var isOwnTimer = false;
+		if ( Meteor.userId() == timer.createdBy ){
+			isOwnTimer = true;
+		}
+
+		// @TODO handle follower mode
+
+		if ( typeof notificationType !== 'undefined' ) {
+			switch ( notificationType ) {
+				case 'breakComplete':
+					if ( isOwnTimer ) {
+						PNotify.desktop.permission(); // @TODO this should be wrapped in a check for user wanting desktop notifications e.g. new function "userPreferencesDesktopNotifications"
+						(new PNotify({
+							title: 'Break over!',
+							text: 'Ready to get back to work? Click to start a new work timer.', // @TODO should be able to handle auto-continuing timers
+							desktop: {
+								desktop: desktopNotificationsEnabled,
+								icon: '',
+							}
+						})).get().click(function ( e ) {
+							if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
+							alert ('You clicked the notification.'); // @TODO start new timer
+						});
+					} else {
+						// @TODO notify the user when another user's timer
+					}
+					break;
+				case 'workComplete':
+					if ( isOwnTimer ) {
+						PNotify.desktop.permission(); // @TODO this should be wrapped in a check for user wanting desktop notifications
+						(new PNotify({
+							title: 'Work is over!',
+							text: 'The work phase of your timer was completed. Click to start your break. ', // @TODO should be able to handle auto-continuing break
+							desktop: {
+								desktop: desktopNotificationsEnabled,
+								icon: '',
+							}
+						})).get().click(function ( e ) {
+							if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
+							alert ('You clicked the notification.'); // @TODO start the break
+						});
+					} else {
+						// @TODO notify the user when another user's timer
+					}
+					break;
+			}
 		}
 
 	},
 
 	workComplete: function (timer) {
-		var currentUserId = Meteor.userId();
 		// only notifying user on changes to their own timer
-		if( currentUserId === timer.createdBy ) {
-			Meteor.sharedTimerFunctions.playBreakNotification();
-			Meteor.sharedTimerFunctions.showDesktopNotification( timer );
+		if( Meteor.userId() === timer.createdBy ) {
+			Meteor.sharedTimerFunctions.playAudioNotification('workComplete');
+			Meteor.sharedTimerFunctions.showDesktopNotification( timer, 'workComplete' );
 			// @TODO get user to confirm before continuing onto the break phase
+			Session.set('notified-work-completed-timer-' + timer._id, true );
+		}
+	},
+
+	breakComplete: function ( timer ) {
+		// only notifying user on changes to their own timer
+		if( Meteor.userId() === timer.createdBy ) {
+			Meteor.sharedTimerFunctions.playAudioNotification( 'breakComplete' );
+			Meteor.sharedTimerFunctions.showDesktopNotification( timer, 'breakComplete' );
+			// @TODO get user to confirm before continuing onto the break phase
+			Session.set('notified-break-completed-timer-' + timer._id, true );
 		}
 	},
 
@@ -88,12 +135,17 @@ Meteor.sharedTimerFunctions = {
 	            break;
 	    }
 
-	    if( secondsElapsed == timer.durationWork){
-	        Meteor.sharedTimerFunctions.workComplete(timer);
+	    if( secondsElapsed >= timer.durationWork){
+	    	if (! Session.equals('notified-work-completed-timer-' + timer._id, true ) ) {
+	    		Meteor.sharedTimerFunctions.workComplete(timer);
+	    	}
 	    }
 
-	    if( secondsElapsed >= timer.durationWork + timer.durationBreak){
-	        Meteor.sharedTimerFunctions.markTimerComplete(timer);
+	    if( secondsElapsed >= timer.durationWork + timer.durationBreak ){
+	    	if (! Session.equals('notified-break-completed-timer-' + timer._id, true ) ) {
+	    		Meteor.sharedTimerFunctions.breakComplete( timer );
+	    	}
+	        Meteor.sharedTimerFunctions.markTimerComplete( timer );
 	    }
 
 	    return secondsElapsed;

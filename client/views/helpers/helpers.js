@@ -35,12 +35,12 @@ UI.registerHelper('calendarDate', function(context, options) {
 
 UI.registerHelper('desktopNotificationsEnabled', function (context, options) {
   // @TODO check user preferences to see if they want desktop notifications
-  if ( notify.permissionLevel() == notify.PERMISSION_DEFAULT || notify.permissionLevel() == notify.PERMISSION_DENIED ){
+
+  if ( PNotify.desktop.checkPermission() == 1 ){ // NB this does not seem to work reactively now, will need to be handled with a session var
+    // permission not granted
     return false;
-  }else if ( notify.permissionLevel() == notify.PERMISSION_GRANTED ) {
+  } else{
+    // permission granted
     return true;
-  }else{
-    // we don't know, so return false
-    return false;
   }
 });

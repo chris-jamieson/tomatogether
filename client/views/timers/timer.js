@@ -280,7 +280,7 @@ Template.timer.events({
     // @TODO move this elsewhere (timer not appropriate place for it)
     'click .desktop-notifications-enable': function (e) {
         e.preventDefault();
-        notify.requestPermission();
+        PNotify.desktop.permission();
     },
     // @TODO move this elsewhere (timer not appropriate place for it)
     'click .desktop-notifications-disable': function (e) {
