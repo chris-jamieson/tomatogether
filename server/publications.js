@@ -20,3 +20,10 @@ Meteor.publish("teamTimers", function (teamId) {
     Timers.find({ createdBy: { $in: team.members } }),
   ];
 });
+
+Meteor.publish("myUserData", function () {
+  return Meteor.users.find( { _id: this.userId }, { fields: {
+    'profile': 1,
+    'preferences': 1
+  }} );
+});

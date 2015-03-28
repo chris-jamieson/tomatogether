@@ -1,0 +1,62 @@
+<template name="userPreferences">
+  <div role="tabpanel">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#account" aria-controls="account" role="tab" data-toggle="tab">Account</a>
+      </li>
+      <li role="presentation">
+        <a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">Notifications</a>
+      </li>
+      <li role="presentation">
+        <a href="#timers" aria-controls="timers" role="tab" data-toggle="tab">Timers</a>
+      </li>
+      <li role="presentation">
+        <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a>
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane fade in active" id="account">
+      <!-- account settings form -->
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="notifications">
+        <form id="user-edit-account-form" class="form-horizontal">
+        <fieldset>
+
+        <!-- Form Name -->
+        <legend class="sr-only">Notifications settings</legend>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="work-minutes">Desktop notifications</label>
+          <div class="col-md-4">
+            <div class="checkbox">
+              <label for="preferences.enableDesktopNotifications">
+                <input type="checkbox" name="preferences.enableDesktopNotifications" checked="{{user.preferences.enableDesktopNotifications}}"> Show desktop notifications?
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="work-minutes">Audio notifications</label>
+          <div class="col-md-4">
+            <div class="checkbox">
+              <label for="preferences.enableAudioNotifications">
+                <input type="checkbox" name="preferences.enableAudioNotifications" checked="{{user.preferences.enableAudioNotifications}}"> Play audio notifications?
+              </label>
+            </div>
+          </div>
+        </div>
+
+        </fieldset>
+        </form>
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="timers">Timers</div>
+      <div role="tabpanel" class="tab-pane fade" id="profile">Profile</div>
+    </div>
+
+  </div>
+</template>
