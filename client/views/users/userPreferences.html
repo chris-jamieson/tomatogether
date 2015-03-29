@@ -1,42 +1,135 @@
 <template name="userPreferences">
-  <div role="tabpanel" class="well">
+  <div role="tabpanel">
 
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs nav-justified" role="tablist">
       <li role="presentation" class="active">
-        <a href="#account" aria-controls="account" role="tab" data-toggle="tab">Account</a>
+        <a href="#account" aria-controls="account" role="tab" data-toggle="tab"><i class="fa fa-user fa-2x icon-inline icon-space-right text-muted"></i> Account</a>
       </li>
       <li role="presentation">
-        <a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">Notifications</a>
+        <a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab"><i class="fa fa-bell fa-2x icon-inline icon-space-right text-muted"></i> Notifications</a>
       </li>
       <li role="presentation">
-        <a href="#timers" aria-controls="timers" role="tab" data-toggle="tab">Timers</a>
-      </li>
-      <li role="presentation">
-        <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a>
+        <a href="#timers" aria-controls="timers" role="tab" data-toggle="tab"><i class="fa fa-clock-o fa-2x icon-inline icon-space-right text-muted"></i> Timers</a>
       </li>
     </ul>
 
     <!-- Tab panes -->
-    <div class="tab-content">
-      <div role="tabpanel" class="tab-pane fade in active" id="account">
-      <!-- account settings form -->
+    <div id="forms-container" class="tab-content row">
+      <div role="tabpanel" class="tab-pane fade in active col-xs-12" id="account">
+        <div class="preferences-icon-container hidden-xs hidden-sm col-md-4 text-center">
+          <i class="fa fa-user icon-huge icon-padding text-muted"></i>
+        </div>
+        <!-- account settings form -->
+        <form id="user-edit-account-form" class="form-horizontal preferences-form">
+          <fieldset>
+            <!-- Form name -->
+            <legend class="sr-only">Account settings</legend>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="emailAddress">Email address</label>  
+              <div class="col-md-4">
+                <input type="email" class="form-control" name="emailAddress" placeholder="Email address" value="{{ userEmailAddress }}">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-md-4 control-label">Password</label>  
+              <div class="col-md-4">
+                <button data-toggle="modal" data-target="#password-form-container" class="password-form-toggle btn btn-default">Change your password</button>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="profile.firstName">First name</label>  
+              <div class="col-md-4">
+                <input name="profile.firstName" type="text" placeholder="Ron" class="form-control input-md" value="{{ user.profile.firstName }}">
+              </div>
+            </div>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="profile.lastName">Last name</label>  
+              <div class="col-md-4">
+                <input name="profile.lastName" type="text" placeholder="Burgundy" class="form-control input-md" value="{{ user.profile.lastName }}">
+              </div>
+            </div>
+            
+            <div class="modal fade" id="password-form-container">
+              <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Change password</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id="change-password">
+                      <fieldset>
+                        <legend class="sr-only">Password change form</legend>
+                        <!-- Password input-->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="current-password">Current password</label>  
+                          <div class="col-md-8">
+                            <input type="password" data-autosave="false" class="form-control" id="current-password" name="current-password" placeholder="Current Password">
+                          </div>
+                        </div>
+
+                        <!-- Password input-->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="new-password">New password</label>  
+                          <div class="col-md-8">
+                            <input type="password" data-autosave="false" class="form-control" id="new-password" name="new-password" placeholder="New Password">
+                          </div>
+                        </div>
+
+                        <!-- Password input-->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="new-password-repeated">Repeat New Password</label>  
+                          <div class="col-md-8">
+                            <input type="password" data-autosave="false" class="form-control" id="new-password-repeated" name="new-password-repeated" placeholder="Repeat New Password">
+                          </div>
+                        </div>
+
+
+                      </fieldset>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    {{ #if passwordSubmitting }}
+                      <button class="btn btn-flat btn-info" disabled="disabled">Please wait&hellip;</button>
+                    {{ else }}
+                      <button type="button" class="btn btn-success update-password">Update password</button>
+                    {{ /if }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </fieldset>
+        </form>
       </div>
-      <div role="tabpanel" class="tab-pane fade" id="notifications">
-        <form id="user-edit-account-form" class="form-horizontal">
+      <div role="tabpanel" class="tab-pane fade col-xs-12" id="notifications">
+        <div class="preferences-icon-container hidden-xs hidden-sm col-md-4 text-center">
+          <i class="fa fa-bell icon-huge icon-padding text-muted"></i>
+        </div>
+        <form id="user-edit-account-form" class="form-horizontal preferences-form">
         <fieldset>
 
         <!-- Form Name -->
         <legend class="sr-only">Notifications settings</legend>
 
         <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-10">
+          <div class="col-md-offset-4 col-md-4">
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="preferences.enableDesktopNotifications" checked="{{user.preferences.enableDesktopNotifications}}"> Show desktop notifications?
               </label>
             </div>
-            <div>
+            <div class="col-xs-offset-2">
               {{ #if user.preferences.enableDesktopNotifications }}
                 {{ #if desktopNotificationsEnabled }}
                     <span class="sr-only">This site has been granted permission to display desktop notifications on this browser</span>
@@ -49,25 +142,25 @@
         </div>
 
         <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-10">
+          <div class="col-md-offset-4 col-md-4">
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="preferences.enableAudioNotifications" checked="{{user.preferences.enableAudioNotifications}}"> Play audio notifications?
               </label>
             </div>
             {{ #if user.preferences.enableAudioNotifications }}
-              <div class="notification-options-container">
-                <div id="sound-effect-work-completed">
-                  <h5>Work completed sound effect</h5>
+              <div class="notification-options-container col-xs-offset-2">
+                <div id="sound-effect-work-completed" class="vertical-space">
+                  <strong>Work completed sound</strong>
                   {{# each soundEffectWorkCompletedOptions }}
-                    {{ > soundEffectOption }}
+                    {{ > soundEffectOption option=this user=../user }}
                   {{ /each }}
                 </div>
 
-                <div id="sound-effect-break-completed">
-                  <h5>Break completed sound effect</h5>
+                <div id="sound-effect-break-completed" class="vertical-space">
+                  <strong>Break completed sound</strong>
                   {{# each soundEffectBreakCompletedOptions }}
-                    {{ > soundEffectOption }}
+                    {{ > soundEffectOption option=this user=../user }}
                   {{ /each }}
                 </div>
               </div>
@@ -78,22 +171,108 @@
         </fieldset>
         </form>
       </div>
-      <div role="tabpanel" class="tab-pane fade" id="timers">Timers</div>
-      <div role="tabpanel" class="tab-pane fade" id="profile">Profile</div>
+      <div role="tabpanel" class="tab-pane fade col-xs-12" id="timers">
+        <div class="preferences-icon-container hidden-xs hidden-sm col-md-4 text-center">
+          <i class="fa fa-clock-o icon-huge icon-padding text-muted"></i>
+        </div>
+
+        <form id="user-edit-account-form" class="form-horizontal preferences-form">
+        <fieldset>
+
+        <!-- Form Name -->
+        <legend class="sr-only">Timers settings</legend>
+
+        <!-- Appended Input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="preferences.defaultTimerDurationWork">Default work duration</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <input id="default-work-minutes" name="preferences.defaultTimerDurationWork" class="form-control" data-convert-before-save="minutesToSeconds" placeholder="25" type="number" value="{{ convertSecondsToMinutes user.preferences.defaultTimerDurationWork }}">
+              <span class="input-group-addon">mins</span>
+            </div>
+          </div>
+        </div>
+        <!-- Appended Input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="preferences.defaultTimerDurationBreak">Default break duration</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <input id="default-work-minutes" name="preferences.defaultTimerDurationBreak" class="form-control" data-convert-before-save="minutesToSeconds" placeholder="5" type="number" value="{{ convertSecondsToMinutes user.preferences.defaultTimerDurationBreak }}">
+              <span class="input-group-addon">mins</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="preferences.includeLongBreaks" checked="{{user.preferences.includeLongBreaks}}"> Include periodic long breaks?
+              </label>
+            </div>
+          </div>
+        </div>
+        {{ #if user.preferences.includeLongBreaks }}
+          <div class="long-breaks-options-container col-xs-12">
+            <!-- Appended Input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="preferences.defaultTimerDurationLongBreak">Default long break duration</label>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <input id="default-work-minutes" name="preferences.defaultTimerDurationLongBreak" class="form-control" data-convert-before-save="minutesToSeconds" placeholder="15" type="number" value="{{ convertSecondsToMinutes user.preferences.defaultTimerDurationLongBreak }}">
+                  <span class="input-group-addon">mins</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Appended Input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="preferences.shortBreaksBeforeLongBreaks">How many short breaks before a long break?</label>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <input id="default-work-minutes" name="preferences.shortBreaksBeforeLongBreaks" class="form-control" placeholder="3" type="number" value="{{ user.preferences.shortBreaksBeforeLongBreaks }}">
+                  <span class="input-group-addon">short breaks</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        {{ /if }}
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="preferences.autoContinueToBreak" checked="{{user.preferences.autoContinueToBreak}}"> Auto-start break after work phase complete?
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="preferences.autoStartNewTimer" checked="{{user.preferences.autoStartNewTimer}}"> Auto-start new timer after break phase complete?
+              </label>
+            </div>
+          </div>
+        </div>
+
+        </fieldset>
+        </form>
+      </div>
     </div>
 
-    <hr>
-    <div class="clearfix">
-      <button class="btn btn-success pull-right" disabled="{{ saveButtonDisabled }}">{{{ saveStatusText }}}</button>
+    <div class="clearfix row">
+      <div class="col-xs-12">
+        <hr>
+        {{ # if allChangesSaved }}
+          <button class="btn btn-success pull-right" disabled="true">Up to date</button>
+        {{ else }}
+          <button class="btn btn-success pull-right">Save</button>
+        {{ /if }}
+      </div>
     </div>
 
-  </div>
-</template>
-
-<template name="soundEffectOption">
-  <div class="radio">
-    <label>
-      <input type="radio" name="{{ fieldName }}" value="{{ value }}" checked="{{ isChecked }}"> {{ text }}
-    </label>
   </div>
 </template>

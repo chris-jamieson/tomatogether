@@ -1,0 +1,10 @@
+<template name="soundEffectOption">
+  <div class="radio">
+    <label>
+      <input type="radio" name="{{ option.fieldName }}" value="{{ option.value }}" checked="{{ option.isChecked }}"> {{ option.text }} 
+        <button class="btn btn-xs play-audio">
+          <i class="fa fa-play"></i>
+        </button>
+    </label>
+  </div>
+</template>

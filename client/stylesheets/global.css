@@ -8,3 +8,32 @@
 	border-bottom: 0;
 	padding-bottom: 0;
 }
+
+.icon-huge {
+	font-size: 20em;
+}
+
+.icon-inline {
+	vertical-align: middle;
+}
+
+.icon-padding {
+	padding: 20px;
+}
+
+.icon-space-right {
+	margin-right: 0.5em;
+}
+
+.icon-space-left {
+	margin-left: 0.5em;
+}
+
+.preferences-form {
+	margin-top: 1em;
+}
+
+.vertical-space {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}

@@ -44,3 +44,16 @@ UI.registerHelper('desktopNotificationsEnabled', function (context, options) {
     return true;
   }
 });
+
+UI.registerHelper('convertSecondsToMinutes', function(context, options) {
+  var minutes = 0;
+  if( context ) {
+    if ( $.isNumeric ( context ) ) {
+      var seconds = context;
+
+      minutes = seconds / 60;
+    }
+  }
+
+  return Math.round( minutes );
+});
