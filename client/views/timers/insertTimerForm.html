@@ -10,7 +10,7 @@
       <label class="col-md-4 control-label" for="work-minutes">Work</label>
       <div class="col-md-4">
         <div class="input-group">
-          <input id="work-minutes" name="work-minutes" class="form-control" placeholder="25" type="number" value="25" required="">
+          <input id="work-minutes" name="work-minutes" class="form-control" placeholder="25" type="number" value="{{ suggestedWorkDuration }}" required="">
           <span class="input-group-addon">mins</span>
         </div>
         
@@ -21,7 +21,7 @@
       <label class="col-md-4 control-label" for="break-minutes">Break</label>
       <div class="col-md-4">
         <div class="input-group">
-          <input id="break-minutes" name="break-minutes" class="form-control" placeholder="5" type="number" value="5" required="">
+          <input id="break-minutes" name="break-minutes" class="form-control" placeholder="5" type="number" value="{{ suggestedBreakDuration }}" required="">
           <span class="input-group-addon">mins</span>
         </div>
         

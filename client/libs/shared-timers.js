@@ -19,22 +19,40 @@ Meteor.sharedTimerFunctions = {
 	},
 
 	soundFileName : function ( notificationType ) {
-		// @TODO get user preferred sounds
-		// @TODO use notificationType
 		var filename = 'big-ben';
+		var user = Meteor.user();
+		if ( typeof user.preferences !== 'undefined' ) {
+			switch ( notificationType ) {
+				case 'breakComplete':
+					filename = user.preferences.soundEffectBreakCompleted;
+					break;
+
+				case 'workComplete':
+					filename = user.preferences.soundEffectWorkCompleted;
+					break;
+			}
+		}
+		
 		return filename;
 	},
 
 	playAudioNotification : function ( notificationType ) {
-		// @TODO check if user wants sounds (from preferences)
-		if ( !buzz.isSupported ) {
-			console.log('can\'t play sounds because buzz.js not supported');
-		}else{
-			var soundFileName = Meteor.sharedTimerFunctions.soundFileName( notificationType );
-			var s = new buzz.sound('/sounds/' + soundFileName, {
-				formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
-			});
-			s.play();
+		var audioNotificationsEnabled = true; // by default
+		var user = Meteor.user();
+		if ( typeof user.preferences !== 'undefined' ) {
+			audioNotificationsEnabled = user.preferences.enableAudioNotifications;
+		}
+
+		if ( audioNotificationsEnabled === true ) {
+			if ( !buzz.isSupported ) {
+				console.log('can\'t play sounds because buzz.js not supported');
+			}else{
+				var soundFileName = Meteor.sharedTimerFunctions.soundFileName( notificationType );
+				var s = new buzz.sound('/sounds/' + soundFileName, {
+					formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
+				});
+				s.play();
+			}
 		}
 	},
 

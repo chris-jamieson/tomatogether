@@ -52,8 +52,6 @@ UI.registerHelper('calendarDate', function(context, options) {
 });
 
 UI.registerHelper('desktopNotificationsEnabled', function (context, options) {
-  // @TODO check user preferences to see if they want desktop notifications
-
   if ( PNotify.desktop.checkPermission() == 1 ){
     // permission not granted
     return false;
