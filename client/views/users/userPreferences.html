@@ -1,5 +1,5 @@
 <template name="userPreferences">
-  <div role="tabpanel">
+  <div role="tabpanel" class="well">
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
@@ -30,24 +30,48 @@
         <legend class="sr-only">Notifications settings</legend>
 
         <div class="form-group">
-          <label class="col-md-4 control-label" for="work-minutes">Desktop notifications</label>
-          <div class="col-md-4">
+          <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
-              <label for="preferences.enableDesktopNotifications">
+              <label>
                 <input type="checkbox" name="preferences.enableDesktopNotifications" checked="{{user.preferences.enableDesktopNotifications}}"> Show desktop notifications?
               </label>
+            </div>
+            <div>
+              {{ #if user.preferences.enableDesktopNotifications }}
+                {{ #if desktopNotificationsEnabled }}
+                    <span class="sr-only">This site has been granted permission to display desktop notifications on this browser</span>
+                {{else}}
+                    <button class="btn btn-info desktop-notifications-enable"><i class="fa fa-bell"></i> Give permission desktop notifications</button>
+                {{ /if }}
+              {{ /if }}
             </div>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="col-md-4 control-label" for="work-minutes">Audio notifications</label>
-          <div class="col-md-4">
+          <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
-              <label for="preferences.enableAudioNotifications">
+              <label>
                 <input type="checkbox" name="preferences.enableAudioNotifications" checked="{{user.preferences.enableAudioNotifications}}"> Play audio notifications?
               </label>
             </div>
+            {{ #if user.preferences.enableAudioNotifications }}
+              <div class="notification-options-container">
+                <div id="sound-effect-work-completed">
+                  <h5>Work completed sound effect</h5>
+                  {{# each soundEffectWorkCompletedOptions }}
+                    {{ > soundEffectOption }}
+                  {{ /each }}
+                </div>
+
+                <div id="sound-effect-break-completed">
+                  <h5>Break completed sound effect</h5>
+                  {{# each soundEffectBreakCompletedOptions }}
+                    {{ > soundEffectOption }}
+                  {{ /each }}
+                </div>
+              </div>
+            {{ /if }}
           </div>
         </div>
 
@@ -58,5 +82,18 @@
       <div role="tabpanel" class="tab-pane fade" id="profile">Profile</div>
     </div>
 
+    <hr>
+    <div class="clearfix">
+      <button class="btn btn-success pull-right" disabled="{{ saveButtonDisabled }}">{{{ saveStatusText }}}</button>
+    </div>
+
+  </div>
+</template>
+
+<template name="soundEffectOption">
+  <div class="radio">
+    <label>
+      <input type="radio" name="{{ fieldName }}" value="{{ value }}" checked="{{ isChecked }}"> {{ text }}
+    </label>
   </div>
 </template>
