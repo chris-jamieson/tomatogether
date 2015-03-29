@@ -8,13 +8,13 @@
             <p>No active timer</p>
         {{ /if }}
     {{ else }}
-        <div class="timer-container">
+        <div class="timer-container {{ #if ownTimer }} own-timer {{ /if }}" id="timer-{{_id}}">
             <div class="status-container">
                 <p>
                 {{ #if showProgressInformation }}
-                    <div class="text-center">{{ timerPhase }}: {{ timeRemaining }} left <span class="text-muted pull-right">{{{ statusFormatted }}}</span></div>
+                    <div class="text-center"><span class="time-remaining">{{ timerPhase }}: {{ timeRemaining }} left</span> <span class="text-muted pull-right">{{{ statusFormatted }}}</span></div>
                 {{ else }}
-                    <div class="text-center">timer {{{ statusFormatted }}}</div>
+                    <div class="text-center"><span class="time-remaining">timer {{{ statusFormatted }}}</span></div>
                 {{ /if }}
                 </p>
             </div>
@@ -30,16 +30,21 @@
             </div>
             <div class="controls">
                 {{ #if ownTimer }}
-                    <div class="btn-group pull-right">
-                        <button class="btn btn-primary start-timer" disabled="{{ notStartable }}">
-                            <i class="fa fa-play"></i><span class="sr-only">Start timer</span>
-                        </button>
-                        <button class="btn btn-primary pause-timer" disabled="{{ notPausable }}">
-                            <i class="fa fa-pause"></i><span class="sr-only">Pause timer</span>
-                        </button>
-                        <button class="btn btn-primary stop-timer" disabled="{{ notStoppable }}">
-                            <i class="fa fa-stop"></i><span class="sr-only">Stop timer</span>
-                        </button>
+                    <div class="btn-toolbar pull-right" role="toolbar" aria-label="timer controls">
+                        <div class="btn-group btn-group-lg" role="group" aria-label="start or pause timer">
+                            <button class="btn btn-primary start-timer" disabled="{{ notStartable }}" data-toggle="tooltip" data-placement="bottom" title="Start timer" data-container="#timer-{{_id}}">
+                                <i class="fa fa-play"></i><span class="sr-only">Start timer</span>
+                            </button>
+                            <button class="btn btn-primary pause-timer" disabled="{{ notPausable }}" data-toggle="tooltip" data-placement="bottom" title="Pause timer" data-container="#timer-{{_id}}">
+                                <i class="fa fa-pause"></i><span class="sr-only">Pause timer</span>
+                            </button>
+                        </div>
+
+                        <div class="btn-group btn-group-lg" role="group" aria-label="stop timer">
+                            <button class="btn btn-warning stop-timer" disabled="{{ notStoppable }}" data-toggle="tooltip" data-placement="bottom" title="Stop (cancel) timer" data-container="#timer-{{_id}}">
+                                <i class="fa fa-trash-o"></i><span class="sr-only">Stop timer</span>
+                            </button>
+                        </div>
                     </div>
                 {{ /if }}
             </div>

@@ -5,9 +5,27 @@ UI.registerHelper('userDisplayName', function(context, options) {
 
   	var user = Meteor.users.findOne( { _id : userId } );
   	if ( user ) {
-  		if ( user.emails[0].address ){
-  			userDisplayName = user.emails[0].address;
+      var userEmailAddress = user.emails[0].address;
+      var userFirstName = '';
+      var userLastName = '';
+      if ( typeof user.profile !== 'undefined' ) {
+        userFirstName = user.profile.firstName;
+        userLastName = user.profile.lastName;
+      }
+
+  		if ( typeof userEmailAddress !== 'undefined' ){
+  			userDisplayName = userEmailAddress;
   		}
+      if ( typeof userFirstName !== 'undefined' ){
+        if ( userFirstName.length > 0 ){
+          userDisplayName = userFirstName;
+        }
+      }
+      if ( typeof userFirstName !== 'undefined' && typeof userLastName !== 'undefined' ){
+        if ( userFirstName.length > 0 && userLastName.length > 0 ){
+          userDisplayName = userFirstName + ' ' + userLastName;
+        }
+      }
   	}
 
   	return userDisplayName;
@@ -36,7 +54,7 @@ UI.registerHelper('calendarDate', function(context, options) {
 UI.registerHelper('desktopNotificationsEnabled', function (context, options) {
   // @TODO check user preferences to see if they want desktop notifications
 
-  if ( PNotify.desktop.checkPermission() == 1 ){ // NB this does not seem to work reactively now, will need to be handled with a session var
+  if ( PNotify.desktop.checkPermission() == 1 ){
     // permission not granted
     return false;
   } else{

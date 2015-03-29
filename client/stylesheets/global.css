@@ -1,14 +1,10 @@
-.team-member-timers-container{
-	margin-bottom: 1em;
-	padding-bottom: 1em;
-	border-bottom: 1px solid #ddd;
+/** global helpers **/
+.vertical-space {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
-.team-member-timers-container:last-child{
-	border-bottom: 0;
-	padding-bottom: 0;
-}
-
+/** icons **/
 .icon-huge {
 	font-size: 20em;
 }
@@ -29,11 +25,25 @@
 	margin-left: 0.5em;
 }
 
+/** timer **/
+.own-timer .time-remaining {
+	font-size: 3em;
+}
+
+/** team timers **/
+.team-member-timers-container {
+	margin-bottom: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #ddd;
+}
+
+.team-member-timers-container:last-child {
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+
+/** user preferences **/
 .preferences-form {
 	margin-top: 1em;
 }
 
-.vertical-space {
-	margin-top: 0.5em;
-	margin-bottom: 0.5em;
-}

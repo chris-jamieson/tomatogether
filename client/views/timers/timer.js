@@ -34,6 +34,9 @@ Template.timer.rendered = function( ) {
     var timer = this.data;
     Session.set('secondsElapsed-timer-' + timer._id, Meteor.sharedTimerFunctions.calculateSecondsElapsed(timer));
     Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
+
+    // initialize tooltips
+    $('[data-toggle="tooltip"]').tooltip();
 };
 
 Template.timer.helpers({
@@ -276,16 +279,5 @@ Template.timer.events({
         }else{
             toastr.error("Timer must be started or paused in order to be stopped");
         }
-    },
-    // @TODO move this elsewhere (timer not appropriate place for it)
-    'click .desktop-notifications-enable': function (e) {
-        e.preventDefault();
-        PNotify.desktop.permission();
-    },
-    // @TODO move this elsewhere (timer not appropriate place for it)
-    'click .desktop-notifications-disable': function (e) {
-        e.preventDefault();
-        // @TODO change the user preference
-        toastr.warning('Sorry, this doesn\'t do anything... yet', 'Borked :(');
     }
 });

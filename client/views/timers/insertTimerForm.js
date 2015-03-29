@@ -8,11 +8,12 @@ Template.insertTimerForm.events({
         var breakSeconds = breakMinutes * 60;
         Timers.insert({ durationWork: workSeconds, durationBreak: breakSeconds }, function (error, result) {
             if(error){
+                // @TODO better error display for user
                 console.log(error);
             }
             
             if(result){
-                console.log(result);
+                // console.log(result);
             }
         });
     }

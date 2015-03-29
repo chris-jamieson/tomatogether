@@ -123,7 +123,7 @@
         <legend class="sr-only">Notifications settings</legend>
 
         <div class="form-group">
-          <div class="col-md-offset-4 col-md-4">
+          <div class="col-md-offset-4 col-md-8">
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="preferences.enableDesktopNotifications" checked="{{user.preferences.enableDesktopNotifications}}"> Show desktop notifications?
@@ -132,9 +132,14 @@
             <div class="col-xs-offset-2">
               {{ #if user.preferences.enableDesktopNotifications }}
                 {{ #if desktopNotificationsEnabled }}
-                    <span class="sr-only">This site has been granted permission to display desktop notifications on this browser</span>
+                    <p class="text-muted">This site has been granted permission to display desktop notifications on this browser.</p>
                 {{else}}
-                    <button class="btn btn-info desktop-notifications-enable"><i class="fa fa-bell"></i> Give permission desktop notifications</button>
+                  {{ #if desktopNotificationsPermissionRequested }}
+                    <p class="text-muted">You should see a browser dialog asking you to grant or deny permission. Once you have granted permission, you can refresh this page to check permission has been granted.</p>
+                  {{ else }}
+                    <p class="text-muted">Desktop notifications are disabled in your browser. Please enable them.</p>
+                    <button class="btn btn-warning vertical-space desktop-notifications-enable"><i class="fa fa-bell"></i> Allow desktop notifications in browser</button>
+                  {{ /if }}
                 {{ /if }}
               {{ /if }}
             </div>
@@ -142,7 +147,7 @@
         </div>
 
         <div class="form-group">
-          <div class="col-md-offset-4 col-md-4">
+          <div class="col-md-offset-4 col-md-8">
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="preferences.enableAudioNotifications" checked="{{user.preferences.enableAudioNotifications}}"> Play audio notifications?
@@ -269,7 +274,7 @@
         {{ # if allChangesSaved }}
           <button class="btn btn-success pull-right" disabled="true">Up to date</button>
         {{ else }}
-          <button class="btn btn-success pull-right">Save</button>
+          <button class="btn btn-success pull-right save-preferences">Save</button>
         {{ /if }}
       </div>
     </div>

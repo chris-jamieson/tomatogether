@@ -12,6 +12,8 @@ function prepareValueForDatabase ( input ) {
 
 	if ( input.type === "checkbox" ) {
 		value = input.checked;
+	}else if ( input.type === "radio" ) {
+		value = $('input[name="'+input.name+'"]:checked').val();
 	}else {
 		value = input.value;
 	}
@@ -46,10 +48,8 @@ function prepareFieldNameForDatabase ( input ) {
 	return fieldName;
 }
 
-function areAllChangesSaved (user) {
-	var allChangesSaved = true;
-
-	console.log('user', user);
+function getUnsavedInputs ( user ) {
+	var unsavedInputs = [];
 
 	$('#forms-container *').filter(':input').each(function ( index, input ) {
 		if ( inputShouldAutosave ( input ) === true ) {
@@ -59,9 +59,6 @@ function areAllChangesSaved (user) {
 			if ( typeof value !== 'undefined' ){
 				var fieldName = prepareFieldNameForDatabase ( input );
 				if ( typeof fieldName !== 'undefined' ){
-					console.log('fieldName: ', fieldName);
-					console.log('value: ', value);
-
 					if ( fieldName.indexOf('.') > -1 ) {
 						var splitFieldName = fieldName.split('.');
 					}else {
@@ -71,28 +68,54 @@ function areAllChangesSaved (user) {
 					var fieldToCheck = $.extend(true, {}, user);
 
 					if ( $.isArray( splitFieldName ) ) {
-						for (var i = splitFieldName.length - 1; i >= 0; i--) {
-							fieldToCheck = fieldToCheck[splitFieldName[i]];
+						for (var i = 0; i < splitFieldName.length; i++) {
+							var propertyName = splitFieldName[i];
+							fieldToCheck = fieldToCheck[propertyName];
 						}
 					} else {
 						fieldToCheck = fieldToCheck[splitFieldName];
 					}
 
-					console.log('fieldToCheck: ', fieldToCheck);
 
 					if ( typeof fieldToCheck !== 'undefined' ) {
 						// if anything does not match, mark false
-						if ( _.isEqual (fieldToCheck, value ) ) {
-							console.log ('looks like ' + fieldToCheck + ' IS equal to ' + value);
-						}else{
-							console.log ('looks like ' + fieldToCheck + ' not equal to ' + value);
-							allChangesSaved = false;
+						// objects
+						if ( _.isObject ( fieldToCheck ) ) {
+							if ( !_.isEqual (fieldToCheck, value ) ) {
+								unsavedInputs.push( input );
+							}
 						}
+						// strings
+						if ( _.isString ( fieldToCheck ) ) {
+							if ( fieldToCheck != value.trim()  ) {
+								unsavedInputs.push( input );
+							}
+						}
+						// number
+						if ( _.isNumber ( fieldToCheck ) ) {
+							if ( fieldToCheck != value  ) {
+								unsavedInputs.push( input );
+							}
+						}
+
 					}
 				}
 			}
 		}
 	} );
+
+	return unsavedInputs;
+}
+
+function areAllChangesSaved (user) {
+	var allChangesSaved = true;
+	var unsavedInputs = getUnsavedInputs( user );
+
+	if ( unsavedInputs.length > 0 ) {
+		allChangesSaved = false;
+	}
+
+	Session.set('allChangesSaved', allChangesSaved);
 
 	return allChangesSaved;
 };
@@ -128,8 +151,7 @@ Template.userPreferences.helpers({
 		return disabled;
 	},
 	'allChangesSaved': function () {
-		var user = this.user;
-		return areAllChangesSaved (user);
+		return Session.equals('allChangesSaved', true);
 	},
 	'soundEffectBreakCompletedOptions': function ( ) {
 		var user = this.user;
@@ -218,6 +240,9 @@ Template.userPreferences.helpers({
 	},
 	passwordSubmitting: function () {
 	    return Session.equals('passwordSubmitting', true);
+	},
+	desktopNotificationsPermissionRequested: function () {
+		return Session.equals ('desktopNotificationsPermissionRequested', true);
 	}
 });
 
@@ -233,12 +258,10 @@ Template.userPreferences.events({
 			var $set = {};
 			$set[fieldName] = value;
 
-			Session.set('savingInProgress', true);
 			Meteor.users.update({ _id: user._id }, { $set: $set }, function ( error, result ) {
-				Session.set('savingInProgress', false);
-
+				user = Meteor.users.findOne( { _id: user._id } );
+				areAllChangesSaved ( user );
 				if ( error ) {
-					Session.set('allChangesSaved', false);
 					new PNotify({
 						title: 'Change not saved',
 						text: error.message,
@@ -281,5 +304,52 @@ Template.userPreferences.events({
 	'click .password-form-toggle': function ( event ) {
 		event.preventDefault();
 	    $("#change-password")[0].reset();
+	},
+	'keyup input': function ( event ) {
+		var user = this.user;
+		areAllChangesSaved ( user );
+	},
+	'click .save-preferences': function ( event ) {
+		event.preventDefault();
+		// get all the unsaved changes
+		var user = this.user;
+		var fieldsToSave = getUnsavedInputs ( user );
+
+		// update the model
+		var $set = {};
+
+		for (var i = fieldsToSave.length - 1; i >= 0; i--) {
+			var target = fieldsToSave[i];
+			var value = prepareValueForDatabase ( target ) ;
+			var fieldName = prepareFieldNameForDatabase ( target );
+
+			$set[fieldName] = value;
+		}
+
+		if ( !_.isEmpty ( $set ) ) {
+			Meteor.users.update({ _id: user._id }, { $set: $set }, function ( error, result ) {
+				user = Meteor.users.findOne( { _id: user._id } );
+				areAllChangesSaved ( user );
+				if ( error ) {
+					new PNotify({
+						title: 'Save failed',
+						text: error.message,
+						type: 'error'
+					});
+				}
+				if ( result ) {
+					new PNotify({
+						title: 'Saved OK',
+						text: '',
+						type: 'success'
+					});
+				}
+			});
+		}
+	},
+	'click .desktop-notifications-enable': function ( event ) {
+		event.preventDefault();
+		PNotify.desktop.permission();
+		Session.set('desktopNotificationsPermissionRequested', true);
 	}
 });
