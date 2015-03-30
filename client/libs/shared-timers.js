@@ -18,6 +18,32 @@ Meteor.sharedTimerFunctions = {
 	    }
 	},
 
+	pauseTimer: function ( timer ) {
+		if(timer.status === "started"){
+		    if(typeof timer.secondsElapsed !== "undefined"){
+		        var existingSecondsElapsed = timer.secondsElapsed;
+		    }else{
+		        existingSecondsElapsed = 0;
+		    }
+		    var startedAt = moment(timer.startedAt);
+		    var pausedAt = moment();
+		    var secondsElapsed = pausedAt.diff(startedAt, 'seconds');
+		    secondsElapsed = secondsElapsed + existingSecondsElapsed;
+
+		    Timers.update({_id: timer._id}, {$set: {status: 'paused', secondsElapsed: secondsElapsed}}, function (error, result) {
+		        if(error){
+		            toastr.error(error.message, "Error");
+		        }
+		        if(result){
+		            Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
+		            toastr.info("You paused a timer");
+		        }
+		    });
+		}else{
+		    toastr.error("You can\'t pause a timer that\'s not running");
+		}
+	},
+
 	soundFileName : function ( notificationType ) {
 		var filename = 'big-ben';
 		var user = Meteor.user();
@@ -112,12 +138,18 @@ Meteor.sharedTimerFunctions = {
 	},
 
 	workComplete: function (timer) {
+		var user = Meteor.user();
 		// only notifying user on changes to their own timer
-		if( Meteor.userId() === timer.createdBy ) {
+		if( user._id === timer.createdBy ) {
 			Meteor.sharedTimerFunctions.playAudioNotification('workComplete');
 			Meteor.sharedTimerFunctions.showDesktopNotification( timer, 'workComplete' );
-			// @TODO get user to confirm before continuing onto the break phase
 			Session.set('notified-work-completed-timer-' + timer._id, true );
+
+			if ( typeof user.preferences !== 'undefined' ) {
+				if ( user.preferences.autoContinueToBreak === false ) {
+					Meteor.sharedTimerFunctions.pauseTimer ( timer );
+				}
+			}
 		}
 	},
 
@@ -126,7 +158,7 @@ Meteor.sharedTimerFunctions = {
 		if( Meteor.userId() === timer.createdBy ) {
 			Meteor.sharedTimerFunctions.playAudioNotification( 'breakComplete' );
 			Meteor.sharedTimerFunctions.showDesktopNotification( timer, 'breakComplete' );
-			// @TODO get user to confirm before continuing onto the break phase
+			// @TODO get user to confirm before continuing onto the next timer
 			Session.set('notified-break-completed-timer-' + timer._id, true );
 		}
 	},

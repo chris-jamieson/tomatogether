@@ -238,30 +238,7 @@ Template.timer.events({
     'click .pause-timer': function (e) {
         e.preventDefault();
         var timer = this;
-        if(timer.status === "started"){
-            if(typeof timer.secondsElapsed !== "undefined"){
-                var existingSecondsElapsed = timer.secondsElapsed;
-            }else{
-                existingSecondsElapsed = 0;
-            }
-            var startedAt = moment(timer.startedAt);
-            var pausedAt = moment();
-            var secondsElapsed = pausedAt.diff(startedAt, 'seconds');
-            secondsElapsed = secondsElapsed + existingSecondsElapsed;
-
-            Timers.update({_id: timer._id}, {$set: {status: 'paused', secondsElapsed: secondsElapsed}}, function (error, result) {
-                if(error){
-                    toastr.error(error.message, "Error");
-                }
-                if(result){
-                    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
-                    toastr.info("You paused a timer");
-                }
-            });
-        }else{
-            toastr.error("You can\'t pause a timer that\'s not running");
-        }
-
+        Meteor.sharedTimerFunctions.pauseTimer(timer);
     },
     'click .stop-timer': function (e) {
         e.preventDefault();
