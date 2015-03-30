@@ -159,7 +159,7 @@
                   <div class="form-group">
                     <label class="col-xs-12 control-label" for="preferences.audioNotificationsVolume"><p class="text-left">Audio volume</p></label>  
                     <div class="col-md-4">
-                      <input name="preferences.audioNotificationsVolume" type="number" class="form-control input-md" value="{{ user.preferences.audioNotificationsVolume }}">
+                      <input name="preferences.audioNotificationsVolume" type="number" class="form-control input-md slider" data-slider-min="0" data-slider-max="100" data-slider-step="5" data-slider-value="{{ user.preferences.audioNotificationsVolume }}">
                     </div>
                   </div>
                 </div>

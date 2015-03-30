@@ -122,34 +122,10 @@ function areAllChangesSaved (user) {
 
 Template.userPreferences.rendered = function () {
 	Session.set('allChangesSaved', true);
+	$('.slider').slider();
 };
 
 Template.userPreferences.helpers({
-	'saveStatusText': function () {
-		var savingInProgress = Session.equals('savingInProgress', true);
-		var allChangesSaved = Session.equals('allChangesSaved', true);
-		var text = 'Save';
-
-		if ( savingInProgress === true ) {
-			text =  'Saving&hellip;';
-		}else if ( savingInProgress === false && allChangesSaved === true) {
-			text =  'Autosaved';
-		}
-
-		return text;
-	},
-	'saveButtonDisabled': function () {
-		var savingInProgress = Session.equals('savingInProgress', true);
-		var allChangesSaved = Session.equals('allChangesSaved', true);
-		var disabled = true;
-		if ( allChangesSaved === false ) {
-			disabled = false;
-		}else if ( savingInProgress === true ) {
-			disabled = true;
-		}
-
-		return disabled;
-	},
 	'allChangesSaved': function () {
 		return Session.equals('allChangesSaved', true);
 	},
@@ -246,37 +222,40 @@ Template.userPreferences.helpers({
 	}
 });
 
+function attemptAutosave ( target, user ) {
+	if( inputShouldAutosave ( target ) === true ) {
+		var value = prepareValueForDatabase ( target ) ;
+		var fieldName = prepareFieldNameForDatabase ( target );
+
+		var $set = {};
+		$set[fieldName] = value;
+
+		Meteor.users.update({ _id: user._id }, { $set: $set }, function ( error, result ) {
+			user = Meteor.users.findOne( { _id: user._id } );
+			areAllChangesSaved ( user );
+			if ( error ) {
+				new PNotify({
+					title: 'Change not saved',
+					text: error.message,
+					type: 'error'
+				});
+			}
+			if ( result ) {
+				new PNotify({
+					title: 'Change saved',
+					text: '',
+					type: 'success'
+				});
+			}
+		});
+	}
+}
+
 Template.userPreferences.events({
 	'change input': function ( event ) {
 		var user = this.user;
 		var target = event.target;
-
-		if( inputShouldAutosave ( target ) === true ) {
-			var value = prepareValueForDatabase ( target ) ;
-			var fieldName = prepareFieldNameForDatabase ( target );
-
-			var $set = {};
-			$set[fieldName] = value;
-
-			Meteor.users.update({ _id: user._id }, { $set: $set }, function ( error, result ) {
-				user = Meteor.users.findOne( { _id: user._id } );
-				areAllChangesSaved ( user );
-				if ( error ) {
-					new PNotify({
-						title: 'Change not saved',
-						text: error.message,
-						type: 'error'
-					});
-				}
-				if ( result ) {
-					new PNotify({
-						title: 'Change saved',
-						text: '',
-						type: 'success'
-					});
-				}
-			});
-		}
+		attemptAutosave( target, user );
 	},
 	'click .update-password': function( event ) {
 	    Session.set('passwordSubmitting', true);
@@ -351,5 +330,10 @@ Template.userPreferences.events({
 		event.preventDefault();
 		PNotify.desktop.permission();
 		Session.set('desktopNotificationsPermissionRequested', true);
+	},
+	'slideStop .slider': function ( event ) {
+		var user = this.user;
+		var target = event.target;
+		attemptAutosave( target, user );
 	}
 });
