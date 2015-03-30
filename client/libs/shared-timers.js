@@ -107,9 +107,11 @@ Meteor.sharedTimerFunctions = {
 
 	playAudioNotification : function ( notificationType ) {
 		var audioNotificationsEnabled = true; // by default
+		var audioVolume = 80; // default
 		var user = Meteor.user();
 		if ( typeof user.preferences !== 'undefined' ) {
 			audioNotificationsEnabled = user.preferences.enableAudioNotifications;
+			audioVolume = user.preferences.audioNotificationsVolume;
 		}
 
 		if ( audioNotificationsEnabled === true ) {
@@ -118,7 +120,8 @@ Meteor.sharedTimerFunctions = {
 			}else{
 				var soundFileName = Meteor.sharedTimerFunctions.soundFileName( notificationType );
 				var s = new buzz.sound('/sounds/' + soundFileName, {
-					formats: [ 'wav' ] // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
+					formats: [ 'wav' ], // @TODO add other file types to support other browsers: ['ogg', 'mp3', 'aac', 'wav']
+					volume: audioVolume
 				});
 				s.play();
 			}
