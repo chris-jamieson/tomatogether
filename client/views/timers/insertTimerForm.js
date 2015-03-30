@@ -13,7 +13,7 @@ Template.insertTimerForm.helpers({
     },
     'suggestedWorkDuration': function () {
         // should be in mins
-        var duration = 15;
+        var duration = 25;
         var user = Meteor.user();
         if ( typeof user.preferences !== 'undefined' ) {
             duration = user.preferences.defaultTimerDurationWork / 60;

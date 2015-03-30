@@ -44,6 +44,31 @@ Meteor.sharedTimerFunctions = {
 		}
 	},
 
+	startNewTimer: function ( ) {
+		user = Meteor.user();
+
+		var workSeconds = 25 * 60;
+		var breakSeconds = 5 * 60;
+
+		if ( typeof user.preferences !== 'undefined' ) {
+			workSeconds = user.preferences.defaultTimerDurationWork;
+			breakSeconds = user.preferences.defaultTimerDurationBreak;
+		}
+
+		// @TODO handle long breaks
+		var startedAt = new Date();
+		Timers.insert({ durationWork: workSeconds, durationBreak: breakSeconds, status: 'started', startedAt: startedAt }, function (error, result) {
+		    if(error){
+		        // @TODO better error display for user
+		        console.log(error);
+		    }
+		    
+		    if(result){
+		        // @TODO nice notification
+		    }
+		});
+	},
+
 	soundFileName : function ( notificationType ) {
 		var filename = 'big-ben';
 		var user = Meteor.user();
@@ -83,8 +108,12 @@ Meteor.sharedTimerFunctions = {
 	},
 
 	showDesktopNotification: function ( timer, notificationType ) {
-		if ( true ) { // @TODO check if user wants to show desktop notifications
-			desktopNotificationsEnabled = true;
+		var user = Meteor.user();
+		var desktopNotificationsEnabled = false;
+		if ( typeof user.preferences !== undefined ) {
+			if ( user.preferences.enableDesktopNotifications === true ) {
+				desktopNotificationsEnabled = true;
+			}
 		}
 
 		var isOwnTimer = false;
@@ -98,7 +127,9 @@ Meteor.sharedTimerFunctions = {
 			switch ( notificationType ) {
 				case 'breakComplete':
 					if ( isOwnTimer ) {
-						PNotify.desktop.permission(); // @TODO this should be wrapped in a check for user wanting desktop notifications e.g. new function "userPreferencesDesktopNotifications"
+						if ( desktopNotificationsEnabled === true ) {
+							PNotify.desktop.permission();
+						}
 						(new PNotify({
 							title: 'Break over!',
 							text: 'Ready to get back to work? Click to start a new work timer.', // @TODO should be able to handle auto-continuing timers
@@ -116,7 +147,9 @@ Meteor.sharedTimerFunctions = {
 					break;
 				case 'workComplete':
 					if ( isOwnTimer ) {
-						PNotify.desktop.permission(); // @TODO this should be wrapped in a check for user wanting desktop notifications
+						if ( desktopNotificationsEnabled === true ) {
+							PNotify.desktop.permission();
+						}
 						(new PNotify({
 							title: 'Work is over!',
 							text: 'The work phase of your timer was completed. Click to start your break. ', // @TODO should be able to handle auto-continuing break
@@ -154,12 +187,18 @@ Meteor.sharedTimerFunctions = {
 	},
 
 	breakComplete: function ( timer ) {
+		var user = Meteor.user ();
 		// only notifying user on changes to their own timer
-		if( Meteor.userId() === timer.createdBy ) {
+		if( user._id === timer.createdBy ) {
 			Meteor.sharedTimerFunctions.playAudioNotification( 'breakComplete' );
 			Meteor.sharedTimerFunctions.showDesktopNotification( timer, 'breakComplete' );
-			// @TODO get user to confirm before continuing onto the next timer
 			Session.set('notified-break-completed-timer-' + timer._id, true );
+
+			if ( typeof user.preferences !== 'undefined' ) {
+				if ( user.preferences.autoStartNewTimer === true ) {
+					Meteor.sharedTimerFunctions.startNewTimer();
+				}
+			}
 		}
 	},
 
