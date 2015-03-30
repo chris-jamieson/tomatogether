@@ -44,6 +44,24 @@ Meteor.sharedTimerFunctions = {
 		}
 	},
 
+	startOrResumeTimer: function ( timer ) {
+		if(timer.status === "paused"){
+		    var startedAt = new Date();
+		    Timers.update({_id: timer._id}, {$set: {status: 'started', startedAt: startedAt}}, function (error, result) {
+		        if(error){
+		            toastr.error(error.message, "Error");
+		        }
+		        if(result){
+		            Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
+		            Meteor.sharedTimerFunctions.startInterval(timer);
+		            toastr.info("You started a timer");
+		        }
+		    });
+		}else{
+		    toastr.error("Timer can only be started from paused state");
+		}
+	},
+
 	startNewTimer: function ( ) {
 		user = Meteor.user();
 
@@ -110,14 +128,22 @@ Meteor.sharedTimerFunctions = {
 	showDesktopNotification: function ( timer, notificationType ) {
 		var user = Meteor.user();
 		var desktopNotificationsEnabled = false;
+		var autoStartNewTimer = false;
+		var autoContinueToBreak = false;
 		if ( typeof user.preferences !== undefined ) {
 			if ( user.preferences.enableDesktopNotifications === true ) {
 				desktopNotificationsEnabled = true;
 			}
+			if ( user.preferences.autoContinueToBreak === true ) {
+				autoContinueToBreak = true;
+			}
+			if ( user.preferences.autoStartNewTimer === true ) {
+				autoStartNewTimer = true;
+			}
 		}
 
 		var isOwnTimer = false;
-		if ( Meteor.userId() == timer.createdBy ){
+		if ( user._id == timer.createdBy ){
 			isOwnTimer = true;
 		}
 
@@ -130,17 +156,28 @@ Meteor.sharedTimerFunctions = {
 						if ( desktopNotificationsEnabled === true ) {
 							PNotify.desktop.permission();
 						}
-						(new PNotify({
-							title: 'Break over!',
-							text: 'Ready to get back to work? Click to start a new work timer.', // @TODO should be able to handle auto-continuing timers
-							desktop: {
-								desktop: desktopNotificationsEnabled,
-								icon: '',
-							}
-						})).get().click(function ( e ) {
-							if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
-							alert ('You clicked the notification.'); // @TODO start new timer
-						});
+						if ( autoStartNewTimer === true ) {
+							(new PNotify({
+								title: 'Break over!',
+								text: 'A new work timer will be started automatically.',
+								desktop: {
+									desktop: desktopNotificationsEnabled,
+									icon: '',
+								}
+							}));
+						}else {
+							(new PNotify({
+								title: 'Break over!',
+								text: 'Ready to get back to work? Click to start a new work timer.',
+								desktop: {
+									desktop: desktopNotificationsEnabled,
+									icon: '',
+								}
+							})).get().click(function ( e ) {
+								if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
+								Meteor.sharedTimerFunctions.startNewTimer();
+							});
+						}
 					} else {
 						// @TODO notify the user when another user's timer
 					}
@@ -150,17 +187,29 @@ Meteor.sharedTimerFunctions = {
 						if ( desktopNotificationsEnabled === true ) {
 							PNotify.desktop.permission();
 						}
-						(new PNotify({
-							title: 'Work is over!',
-							text: 'The work phase of your timer was completed. Click to start your break. ', // @TODO should be able to handle auto-continuing break
-							desktop: {
-								desktop: desktopNotificationsEnabled,
-								icon: '',
-							}
-						})).get().click(function ( e ) {
-							if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
-							alert ('You clicked the notification.'); // @TODO start the break
-						});
+						if ( autoContinueToBreak === true ) {
+							(new PNotify({
+								title: 'Work is over!',
+								text: 'The work phase of your timer was completed. Enjoy your break. ',
+								desktop: {
+									desktop: desktopNotificationsEnabled,
+									icon: '',
+								}
+							}));
+						} else {
+							(new PNotify({
+								title: 'Work is over!',
+								text: 'The work phase of your timer was completed. Click to start a break. ',
+								desktop: {
+									desktop: desktopNotificationsEnabled,
+									icon: '',
+								}
+							})).get().click(function ( e ) {
+								if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
+								var updatedTimer = Timers.findOne( { _id: timer._id } );
+								Meteor.sharedTimerFunctions.startOrResumeTimer ( updatedTimer );
+							});
+						}
 					} else {
 						// @TODO notify the user when another user's timer
 					}

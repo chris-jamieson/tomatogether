@@ -219,21 +219,7 @@ Template.timer.events({
     'click .start-timer': function (e) {
         e.preventDefault();
         var timer = this;
-        if(timer.status === "paused"){
-            var startedAt = new Date();
-            Timers.update({_id: timer._id}, {$set: {status: 'started', startedAt: startedAt}}, function (error, result) {
-                if(error){
-                    toastr.error(error.message, "Error");
-                }
-                if(result){
-                    Meteor.sharedTimerFunctions.updateTimerInSession(timer._id);
-                    Meteor.sharedTimerFunctions.startInterval(timer);
-                    toastr.info("You started a timer");
-                }
-            });
-        }else{
-            toastr.error("Timer can only be started from paused state");
-        }
+        Meteor.sharedTimerFunctions.startOrResumeTimer ( timer );
     },
     'click .pause-timer': function (e) {
         e.preventDefault();
