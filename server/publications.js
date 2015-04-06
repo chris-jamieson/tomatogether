@@ -24,6 +24,7 @@ Meteor.publish("teamTimers", function (teamId) {
 Meteor.publish("myUserData", function () {
   return Meteor.users.find( { _id: this.userId }, { fields: {
     'profile': 1,
-    'preferences': 1
+    'preferences': 1,
+    'following': 1
   }} );
 });

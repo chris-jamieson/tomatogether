@@ -1,8 +1,12 @@
 <template name="teams">
 	<h1 class="page-title">All teams</h1>
-    {{ #each teams }}
-        {{ > team }}
-    {{ /each }}
+	{{#if teams.count }}
+        {{ #each teams }}
+            {{ > team }}
+        {{ /each }}
+    {{ else }}
+        <p>No teams exist yet!</p>
+    {{ /if }}
 
     {{ #if userIsLoggedIn }}
     	{{ > insertTeamForm }}

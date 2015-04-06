@@ -1,0 +1,17 @@
+<template name="userOverview">
+    <div>
+        <i class="fa fa-2x fa-user icon-inline text-muted icon-space-right"></i> 
+        <span class="user-name">{{ userDisplayName this }}</span>
+        {{ #if currentUser }}
+            {{ #if isSelf }}
+                <span class="sr-only">Can't follow yourself</span>
+            {{ else }}
+                {{ #if isFollowing }}
+                    <button class="btn btn-danger" name="stop-following">Stop following</button>
+                {{ else }}
+                    <button class="btn btn-success" name="start-following">Start following</button>
+                {{ /if }}
+            {{ /if }}
+        {{ /if }}
+    </div>
+</template>

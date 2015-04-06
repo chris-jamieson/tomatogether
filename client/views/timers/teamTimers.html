@@ -2,7 +2,7 @@
 	<h1 class="page-title">Timers for {{team.name}}</h1>
 	{{#each team.members }}
 		<div class="team-member-timers-container clearfix">
-			<p><i class="fa fa-2x fa-user icon-inline text-muted icon-space-right"></i> {{ userDisplayName this }}</p>
+			{{ > userOverview }}
 			{{ #if latestTimer this }}
 				{{ > timer latestTimer this}}
 			{{ else }}
