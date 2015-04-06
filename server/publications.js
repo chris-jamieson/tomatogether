@@ -4,9 +4,16 @@ Meteor.publish("allTeams", function () {
   ];
 });
 
+// @TODO public teams publication ( public and unlisted teams )
+
+// @TODO usersInMyTeams publication
+
 // @TODO should be a publication just for users in teams I'm in
 Meteor.publish("allUserData", function () {
-    return Meteor.users.find({}, {fields: {'emails': 1}});
+    return Meteor.users.find({}, {fields: {
+      'emails': 1,
+      'following': 1
+    }});
 });
 
 Meteor.publish("teamTimers", function (teamId) {
