@@ -29,18 +29,31 @@ Template.insertTimerForm.events({
         e.preventDefault();
         var workMinutes = $('input[name="work-minutes"]').val();
         var breakMinutes = $('input[name="break-minutes"]').val();
-        
         var workSeconds = workMinutes * 60;
         var breakSeconds = breakMinutes * 60;
-        Timers.insert({ durationWork: workSeconds, durationBreak: breakSeconds }, function (error, result) {
-            if(error){
-                // @TODO better error display for user
-                console.log(error);
-            }
-            
-            if(result){
-                // console.log(result);
-            }
-        });
+
+        if ( $('input[name="autostart"]:checked').length > 0 ) {
+            Timers.insert({ durationWork: workSeconds, durationBreak: breakSeconds, status: 'started', startedAt: Date() }, function (error, result) {
+                if(error){
+                    // @TODO better error display for user
+                    console.log(error);
+                }
+                
+                if(result){
+                    // console.log(result);
+                }
+            });
+        } else {
+            Timers.insert({ durationWork: workSeconds, durationBreak: breakSeconds, status: 'paused'}, function (error, result) {
+                if(error){
+                    // @TODO better error display for user
+                    console.log(error);
+                }
+                
+                if(result){
+                    // console.log(result);
+                }
+            });
+        }
     }
 });
