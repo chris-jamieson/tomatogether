@@ -7,7 +7,11 @@
 				{{ > timer latestTimer this}}
 			{{ else }}
 				{{ #if isCurrentUser this }}
-					{{ > insertTimerForm }}
+					{{ #if isInFollowerMode this }}
+						<p>You must exit follower mode to start a new timer. <button class="btn btn-danger" name="exit-follower-mode">Exit follower mode</button></p>
+					{{ else }}
+						{{ > insertTimerForm }}
+					{{ /if }}
 				{{ /if }}
 			{{ /if }}
 		</div>
