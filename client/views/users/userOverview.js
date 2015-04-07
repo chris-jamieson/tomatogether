@@ -1,9 +1,8 @@
-function isFollowingUser ( userId ) {
+function isFollowingUser ( followerUser, followeeUserId ) {
     var isFollowing = false;
-    var currentUser = Meteor.user();
     
-    if ( typeof currentUser.following !== "undefined" ) {
-        if ( currentUser.following == userId ) {
+    if ( typeof followerUser.following !== "undefined" ) {
+        if ( followerUser.following == followeeUserId ) {
             isFollowing = true;
         }
     }
@@ -13,7 +12,7 @@ function isFollowingUser ( userId ) {
 
 Template.userOverview.helpers ( {
     isFollowing: function () {
-        return isFollowingUser ( this );
+        return isFollowingUser ( Meteor.user(), this );
     },
     isSelf: function () {
         var currentUserId = Meteor.userId();
@@ -23,6 +22,11 @@ Template.userOverview.helpers ( {
         }else{
             return false;
         }
+    },
+    followsCurrentUser: function () {
+        var userId = String(this);
+        var userToCheck = Meteor.users.findOne( { _id: userId  } );
+        return isFollowingUser ( userToCheck, Meteor.userId() );
     }
 } );
 
@@ -32,7 +36,7 @@ Template.userOverview.events( {
         var currentUserId = Meteor.userId();
         var userIdToFollow = String( this );
         // check we are actually following
-        if ( isFollowingUser( userIdToFollow ) === true ) {
+        if ( isFollowingUser( Meteor.user(), userIdToFollow ) === true ) {
             Meteor.users.update( { _id: currentUserId }, { $unset: { following: '' } }, function ( error, result ) {
                 if ( error ) {
                     console.log ( error );
@@ -52,7 +56,7 @@ Template.userOverview.events( {
         var currentUserId = Meteor.userId();
         var userIdToFollow = String( this );
         // check we are not already following
-        if ( isFollowingUser( userIdToFollow ) === true ) {
+        if ( isFollowingUser(Meteor.user(), userIdToFollow ) === true ) {
             // no need to do anything
         }else {
             Meteor.users.update( { _id: currentUserId }, { $set: { following: userIdToFollow } }, function ( error, result ) {

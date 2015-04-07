@@ -6,10 +6,14 @@
             {{ #if isSelf }}
                 <span class="sr-only">Can't follow yourself</span>
             {{ else }}
-                {{ #if isFollowing }}
-                    <button class="btn btn-danger" name="stop-following">Stop following</button>
+                {{ #if followsCurrentUser }}
+                    <span>Is following you</span>
                 {{ else }}
-                    <button class="btn btn-success" name="start-following">Start following</button>
+                    {{ #if isFollowing }}
+                        <button class="btn btn-danger" name="stop-following">Stop following</button>
+                    {{ else }}
+                        <button class="btn btn-success" name="start-following">Start following</button>
+                    {{ /if }}
                 {{ /if }}
             {{ /if }}
         {{ /if }}
