@@ -1,9 +1,21 @@
 <template name="insertTeamForm">
     <div>
-        <h2>Add a team</h2>
-        <form class="insert-team-form">
-            <input class="form-control team-name" type="text" name="team-name">
-            <button class="btn btn-default submit-insert-team-form">Add team</button>
+        <form class="insert-team-form form-horizontal">
+            <fieldset>
+                <legend>Add a team</legend>
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="team-name">Team name</label>
+                    <div class="col-md-4">
+                        <input class="form-control input-md team-name" name="team-name" placeholder="{{ placeholderTeamName }}" type="text">
+                        <span class="help-block">What shall we call your team?</span>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-default submit-insert-team-form" id="submit-insert-team-form" name="submit-insert-team-form">Add team</button>
+                    </div>
+                </div>
+
+            </fieldset>
         </form>
+
     </div>
 </template>

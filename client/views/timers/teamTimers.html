@@ -1,19 +1,25 @@
 <template name="teamTimers">
-	<h1 class="page-title">Timers for {{team.name}}</h1>
-	{{#each team.members }}
-		<div class="team-member-timers-container clearfix">
-			{{ > userOverview }}
-			{{ #if latestTimer this }}
-				{{ > timer latestTimer this}}
-			{{ else }}
-				{{ #if isCurrentUser this }}
-					{{ #if isInFollowerMode this }}
-						<p>You must exit follower mode to start a new timer. <button class="btn btn-danger" name="exit-follower-mode">Exit follower mode</button></p>
-					{{ else }}
-						{{ > insertTimerForm }}
-					{{ /if }}
-				{{ /if }}
-			{{ /if }}
+	<div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+				<h1 class="page-title">Timers for {{team.name}}</h1>
+				{{#each team.members }}
+					<div class="team-member-timers-container clearfix">
+						{{ > userOverview }}
+						{{ #if latestTimer this }}
+							{{ > timer latestTimer this}}
+						{{ else }}
+							{{ #if isCurrentUser this }}
+								{{ #if isInFollowerMode this }}
+									<p>You must exit follower mode to start a new timer. <button class="btn btn-danger" name="exit-follower-mode">Exit follower mode</button></p>
+								{{ else }}
+									{{ > insertTimerForm }}
+								{{ /if }}
+							{{ /if }}
+						{{ /if }}
+					</div>
+				{{ /each }}
+			</div>
 		</div>
-	{{ /each }}
+	</div>
 </template>

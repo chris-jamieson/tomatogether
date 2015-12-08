@@ -1,16 +1,28 @@
 <template name="teams">
-	<h1 class="page-title">All teams</h1>
-	{{#if teams.count }}
-        {{ #each teams }}
-            {{ > team }}
-        {{ /each }}
-    {{ else }}
-        <p>No teams exist yet!</p>
-    {{ /if }}
+	<div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+				<h1 class="page-title">All teams</h1>
+				{{#if teams.count }}
+			        {{ #each teams }}
+			            {{ > team }}
+			        {{ /each }}
+			    {{ else }}
+			        <p>No teams exist yet!</p>
+			    {{ /if }}
 
-    {{ #if userIsLoggedIn }}
-    	{{ > insertTeamForm }}
-    {{ else }}
-    	<p>Log in or register to join a team, or add your own team</p>
-    {{ /if }}
+			    {{ #if userIsLoggedIn }}
+					{{ #if showInsertTeamForm }}
+			    		{{ > insertTeamForm }}
+					{{ else }}
+						<button class="btn btn-default" name="show-insert-team-form">
+							Add a new team &nbsp;<i class="fa fa-plus"></i>
+						</button>
+					{{ /if }}
+			    {{ else }}
+			    	<p>Log in or register to join a team, or add your own team</p>
+			    {{ /if }}
+            </div>
+        </div>
+    </div>
 </template>
