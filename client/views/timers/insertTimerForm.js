@@ -25,8 +25,8 @@ Template.insertTimerForm.helpers({
 });
 
 Template.insertTimerForm.events({
-    'click .insert-timer-form-submit': function (e) {
-        e.preventDefault();
+    'click .insert-timer-form-submit': function (event, template) {
+        event.preventDefault();
         var workMinutes = $('input[name="work-minutes"]').val();
         var breakMinutes = $('input[name="break-minutes"]').val();
         var workSeconds = workMinutes * 60;
@@ -38,7 +38,7 @@ Template.insertTimerForm.events({
                     // @TODO better error display for user
                     console.log(error);
                 }
-                
+
                 if(result){
                     // console.log(result);
                 }
@@ -49,7 +49,7 @@ Template.insertTimerForm.events({
                     // @TODO better error display for user
                     console.log(error);
                 }
-                
+
                 if(result){
                     // console.log(result);
                 }

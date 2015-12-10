@@ -73,3 +73,16 @@ UI.registerHelper('convertSecondsToMinutes', function(context, options) {
 
   return Math.round( minutes );
 });
+
+UI.registerHelper("isInFollowerMode", function( user ){
+    if (typeof user === 'undefined') {
+        user = Meteor.user();
+    }
+
+	if ( typeof user.following !== 'undefined' ) {
+		if ( user.following.length > 0 ) {
+			return true;
+		}
+	}
+	return false;
+});

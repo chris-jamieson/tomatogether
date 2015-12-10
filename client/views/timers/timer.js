@@ -1,9 +1,3 @@
-function userDisplayName(userId){
-    var displayName = userId;
-    // @TODO get name if available
-    return displayName;
-}
-
 function clearInterval ( timer ) {
     var intervalId = Session.get('intervalId-timer-' + timer._id);
     Meteor.clearInterval(intervalId);
@@ -74,7 +68,7 @@ Template.timer.helpers({
         var phase = args.hash.phase;
         var timer = this;
         var secondsElapsed = Session.get('secondsElapsed-timer-' + timer._id || 0);
-        
+
         // colour class
         if ( phase === "work" ) {
             classes.push( 'progress-bar-danger' );
@@ -103,7 +97,7 @@ Template.timer.helpers({
                 }
             }
         }
-        
+
         return classes.join( ' ' );
     },
     ownTimer: function () {
@@ -210,7 +204,7 @@ Template.timer.helpers({
             }
             timeRemaining = moment.duration(secondsRemaining, 'seconds').humanize();
         }
-        
+
         return timeRemaining;
     }
 });

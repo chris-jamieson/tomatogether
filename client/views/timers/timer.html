@@ -30,6 +30,7 @@
             </div>
             <div class="controls">
                 {{ #if ownTimer }}
+                    {{ #unless isInFollowerMode }}
                     <div class="btn-toolbar pull-right" role="toolbar" aria-label="timer controls">
                         <div class="btn-group btn-group-lg" role="group" aria-label="start or pause timer">
                             <button class="btn btn-primary start-timer" disabled="{{ notStartable }}" data-toggle="tooltip" data-placement="bottom" title="Start timer" data-container="#timer-{{_id}}">
@@ -46,6 +47,12 @@
                             </button>
                         </div>
                     </div>
+                    {{ else }}
+                        <div class="col-md-4 pull-right">
+                            <p>You must exit follower mode to control your timer. </p>
+                            {{ > toggleFollowerMode }}
+                        </div>
+                    {{ /unless }}
                 {{ /if }}
             </div>
         </div>

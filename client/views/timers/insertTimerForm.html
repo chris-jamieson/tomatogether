@@ -1,4 +1,5 @@
 <template name="insertTimerForm">
+    {{ #unless isInFollowerMode }}
     <form id="insert-timer-form" class="form-horizontal">
     <fieldset>
 
@@ -13,7 +14,7 @@
           <input id="work-minutes" name="work-minutes" class="form-control" placeholder="25" type="number" value="{{ suggestedWorkDuration }}" required="">
           <span class="input-group-addon">mins</span>
         </div>
-        
+
       </div>
     </div>
     <!-- Appended Input-->
@@ -24,7 +25,7 @@
           <input id="break-minutes" name="break-minutes" class="form-control" placeholder="5" type="number" value="{{ suggestedBreakDuration }}" required="">
           <span class="input-group-addon">mins</span>
         </div>
-        
+
       </div>
     </div>
     <!-- Checkbox -->
@@ -45,5 +46,9 @@
 
     </fieldset>
     </form>
+    {{ else }}
+        <p>You must exit follower mode to start a new timer. </p>
+        {{ > toggleFollowerMode }}
+    {{ /unless }}
 
 </template>
