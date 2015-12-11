@@ -8,7 +8,7 @@ Template.teams.created = function(){
 
         if ( subscription.ready() ) {
             if ( Teams.find({}).count() === 0 ) {
-                instance.showInsertTeamForm = new ReactiveVar( true );
+                instance.showInsertTeamForm.set(true);
             }
         }
     });

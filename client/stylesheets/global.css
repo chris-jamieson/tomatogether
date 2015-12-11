@@ -15,13 +15,12 @@
 
 /** navbar **/
 .navbar-header a.navbar-brand {
-	background-image: url('/images/tomatogether-logo.png');
-	background-position: left center;
+	background-position: 10px center;
 	background-repeat: no-repeat;
+	background-size: 30px;
 	padding-left: 50px;
 	text-transform: uppercase;
 	letter-spacing: 4px;
-	background-size: 45px;
 }
 
 /** icons **/

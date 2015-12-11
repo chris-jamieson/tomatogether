@@ -80,7 +80,7 @@ Meteor.sharedTimerFunctions = {
 		        // @TODO better error display for user
 		        console.log(error);
 		    }
-		    
+
 		    if(result){
 		        // @TODO nice notification
 		    }
@@ -101,7 +101,7 @@ Meteor.sharedTimerFunctions = {
 					break;
 			}
 		}
-		
+
 		return filename;
 	},
 
@@ -165,7 +165,7 @@ Meteor.sharedTimerFunctions = {
 								text: 'A new work timer will be started automatically.',
 								desktop: {
 									desktop: desktopNotificationsEnabled,
-									icon: '',
+									icon: '/images/tomatogether-logo.png',
 								}
 							}));
 						}else {
@@ -174,7 +174,7 @@ Meteor.sharedTimerFunctions = {
 								text: 'Ready to get back to work? Click to start a new work timer.',
 								desktop: {
 									desktop: desktopNotificationsEnabled,
-									icon: '',
+									icon: '/images/tomatogether-logo.png',
 								}
 							})).get().click(function ( e ) {
 								if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
@@ -196,7 +196,7 @@ Meteor.sharedTimerFunctions = {
 								text: 'The work phase of your timer was completed. Enjoy your break. ',
 								desktop: {
 									desktop: desktopNotificationsEnabled,
-									icon: '',
+									icon: '/images/tomatogether-logo.png',
 								}
 							}));
 						} else {
@@ -205,7 +205,7 @@ Meteor.sharedTimerFunctions = {
 								text: 'The work phase of your timer was completed. Click to start a break. ',
 								desktop: {
 									desktop: desktopNotificationsEnabled,
-									icon: '',
+									icon: '/images/tomatogether-logo.png',
 								}
 							})).get().click(function ( e ) {
 								if ( $('.ui-pnotify-closer, .ui-pnotify-sticker, .ui-pnotify-closer *, .ui-pnotify-sticker *').is(e.target)) return;
