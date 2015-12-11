@@ -15,8 +15,13 @@
 
 /** navbar **/
 .navbar-header a.navbar-brand {
-    text-transform: uppercase;
-    letter-spacing: 4px;
+	background-image: url('/images/tomatogether-logo.png');
+	background-position: left center;
+	background-repeat: no-repeat;
+	padding-left: 50px;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	background-size: 45px;
 }
 
 /** icons **/
@@ -66,6 +71,11 @@
 .home-background-cover {
 	background-image: url('/images/tomatoes-cover.jpg');
 	background-size: cover;
+}
+
+.site-name {
+	text-transform: uppercase;
+    letter-spacing: 15px;
 }
 
 /* MARKETING CONTENT
