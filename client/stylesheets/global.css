@@ -13,17 +13,6 @@
 	margin-top: -20px;
 }
 
-/** navbar **/
-.navbar-header a.navbar-brand {
-	background-position: 10px center;
-	background-repeat: no-repeat;
-	background-size: 30px;
-	background-image: url('/images/tomatogether-logo.png');
-	padding-left: 50px;
-	text-transform: uppercase;
-	letter-spacing: 4px;
-}
-
 /** icons **/
 .icon-huge {
 	font-size: 20em;
