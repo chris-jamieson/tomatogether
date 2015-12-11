@@ -11,11 +11,12 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                {{> loginButtons}}
-                {{ #if userIsLoggedIn }}
+                {{ #if currentUser }}
+                <li class="hidden-sm hidden-xs">{{ > avatar user=currentUser shape="circle" }}</li>
                 <li><a href="/teams">Teams</a></li>
                 <li><a href="/user/edit">Preferences</a></li>
                 {{ /if }}
+                {{ > entryAccountButtons }}
             </ul>
         </div>
     </div>
